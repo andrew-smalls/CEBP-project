@@ -1,0 +1,17 @@
+
+- download kafka 2.8.1 (binaries)
+- extract etc
+- go to kafka/config/server.properties and change log.dirs=c:/kafka/kafka-logs
+- go to kafka/config/zookeeper.properties and change dataDir=c:/kafka/zookeeper-data
+- go to kafka/bin/windows and run following commands:
+	- new terminal: zookeeper-server-start.bat ../../config/zookeeper.properties		-- start zookeeper
+
+	- new terminal:kafka-server-start.bat ../../config/server.properties			-- start server
+
+	- new terminal:kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic TestTopic	-- create topic (named TestTopic here)
+
+	- new terminal:kafka-topics.bat --list --zookeeper localhost:2181  		-- lists all topics created
+
+	- new terminal:kafka-console-producer.bat --broker-list localhost:9092 --topic TestTopic		-- input data into the created topic (we input data into the TestTopic, created above)
+
+	- new terminal:kafka-console-consumer.bat --bootstrap-server localhost:2181 --topic TestTopic --from-beginning
