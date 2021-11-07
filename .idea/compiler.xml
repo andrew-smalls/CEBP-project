@@ -6,8 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="CEBP_Client" />
+        <module name="CEBP-project" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="CEBP-project" target="8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
