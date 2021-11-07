@@ -8,21 +8,33 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import java.util.Properties;
 
 public class Producer {
-    public static void main(String[] args) {
-        System.out.println("Hello");
+    private Properties properties;
 
-        String bootstrapServers = "localhost:9092";
-        Properties properties = createProperties(bootstrapServers);
+    public Producer(String bootstrapServers)
+    {
+        properties = createProperties(bootstrapServers);
+    }
 
+    public KafkaProducer<String, String> getProducer()
+    {
         KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
-        ProducerRecord<String, String> record = new ProducerRecord<String, String>("First topic","Major Tom to Ground Control");
+        return producer;
+    }
 
+    public ProducerRecord<String, String> getRecord(String topic, String message, String key) {
+        ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, message, key);
+        return record;
+    }
+
+    public void sendMessage(KafkaProducer<String, String> producer, ProducerRecord<String, String> record)
+    {
         producer.send(record);
         producer.flush();
         producer.close();
     }
 
-    public static Properties createProperties(String bootstrapServers)
+
+    public Properties createProperties(String bootstrapServers)
     {
         Properties properties = new Properties();
 

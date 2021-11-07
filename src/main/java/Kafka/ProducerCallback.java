@@ -9,10 +9,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-import static Kafka.Producer.createProperties;
+//import static Kafka.Producer.createProperties;
 
 public class ProducerCallback {
-    public static void main(String[] args) throws ExecutionException, InterruptedException{
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        /*
         final Logger logger = LoggerFactory.getLogger(ProducerCallback.class);
 
         String bootstrapServers = "localhost:9092";
@@ -47,5 +48,8 @@ public class ProducerCallback {
         }
         producer.flush();
         producer.close();
+    }
+
+     */
     }
 }
