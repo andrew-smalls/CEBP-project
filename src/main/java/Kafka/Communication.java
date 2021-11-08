@@ -6,7 +6,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 public class Communication {
 
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args) throws ClassNotFoundException, InterruptedException {
         String topic = "TestTopic";
         String message = "Mesaj de test";
 
@@ -16,14 +16,11 @@ public class Communication {
         KafkaProducer<String, String> producer = sender.getProducer();
         ProducerRecord<String, String> record = sender.getRecord(topic, message, "1");
 
-        sender.sendMessage(producer, record);
+        for(int i=0;i<100;i++) {
+            sender.sendMessage(producer, record);
+            Thread.sleep(1000);
+        }
 
-        String bootstrapServer_receiver = "localhost:2181";
-        String groupId = "CEBP_app";
-
-        Consumer receiver = new Consumer(bootstrapServer_receiver, groupId);
-        KafkaConsumer<String, String> consumer = receiver.getConsumer();
-        receiver.subscribe(consumer, topic);
-        receiver.receiveMessage(consumer);
+        producer.close();
     }
 }
