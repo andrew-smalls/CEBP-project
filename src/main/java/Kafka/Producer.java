@@ -21,8 +21,8 @@ public class Producer {
         return producer;
     }
 
-    public ProducerRecord<String, String> getRecord(String topic, String message, String key) {
-        ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, message, key);
+    public ProducerRecord<String, String> getRecord(String topic,  String key, String message) {
+        ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, key, message);
         return record;
     }
 
@@ -41,6 +41,8 @@ public class Producer {
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.setProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "test-trx-id123");
+
 
         return properties;
     }

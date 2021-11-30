@@ -53,6 +53,8 @@ public class Consumer {
         properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        properties.setProperty("enable.auto.commit", "true");
+        properties.setProperty("auto.commit.interval.ms", "1000");
 
         return properties;
     }
