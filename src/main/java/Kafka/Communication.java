@@ -16,26 +16,28 @@ import java.util.concurrent.ExecutionException;
 public class Communication {
 
     public static void main(String[] args) throws ClassNotFoundException, InterruptedException, IOException {
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Welcome!\n\n" +
-                "Press:\n" +
-                "0 - for Producer\n"+
-                "1 - for Consumer\n\n"+
-                "Answer: "
+                "Please enter an id: "
         );
-        int res = Integer.parseInt(br.readLine());
-        if(res==0) {
-            System.out.println("You are a Producer\n");
-            Thread producerThread= new Thread(new ProducerCommunication(),"Producer");
-            producerThread.start();
+        String id= br.readLine();
+
+        Thread.currentThread().setName("Principal");
+
+        Thread producerThread= new Thread(new ProducerCommunication(id),"Producer");
+        producerThread.start();
+        ConsumerCommunication consumer=new ConsumerCommunication();
+        Thread consumerThread = new Thread(consumer, "Consumer");
+        consumerThread.start();
+
+        System.out.println("Am ajuns aici!!\n"+Thread.currentThread().getName());
+
+        while(true){
+            if(!producerThread.isAlive()){
+                break;
+            }
         }
-        else if(res==1){
-            System.out.println("You are a consumer\n");
-            Thread consumerThread = new Thread(new ConsumerCommunication(),"Consumer");
-            consumerThread.start();
-        }
-        else{
-            System.out.println("Sorry. Wrong input.\n");
-        }
+
     }
 }

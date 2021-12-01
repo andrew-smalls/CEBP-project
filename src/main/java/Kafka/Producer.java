@@ -10,9 +10,9 @@ import java.util.Properties;
 public class Producer {
     private Properties properties;
 
-    public Producer(String bootstrapServers)
+    public Producer(String bootstrapServers,String transactionId)
     {
-        properties = createProperties(bootstrapServers);
+        properties = createProperties(bootstrapServers,transactionId);
     }
 
     public KafkaProducer<String, String> getProducer()
@@ -34,14 +34,14 @@ public class Producer {
     }
 
 
-    public Properties createProperties(String bootstrapServers)
+    public Properties createProperties(String bootstrapServers,String transactionId)
     {
         Properties properties = new Properties();
 
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        properties.setProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "test-trx-id123");
+        properties.setProperty(ProducerConfig.TRANSACTIONAL_ID_CONFIG, transactionId);
 
 
         return properties;
