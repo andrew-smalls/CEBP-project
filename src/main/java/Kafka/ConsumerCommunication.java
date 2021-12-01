@@ -8,6 +8,9 @@ import java.time.Duration;
 import java.util.Arrays;
 
 public class ConsumerCommunication implements Runnable{
+
+    private boolean running=true;
+
     @Override
     public void run() {
         String topic = "TestTopic";
@@ -16,10 +19,14 @@ public class ConsumerCommunication implements Runnable{
         Consumer receiver=new Consumer(bootstrapServers_sender,"test");
         KafkaConsumer<String, String> consumer = receiver.getConsumer();
         consumer.subscribe(Arrays.asList(topic));
-        while (true) {
+        while (running) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             for (ConsumerRecord<String, String> record : records)
-                System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+                System.out.printf("FRIEND: %s\n",  record.value());
         }
+    }
+
+    public void stopConsumer(){
+        running=false;
     }
 }
