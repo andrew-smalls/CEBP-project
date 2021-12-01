@@ -21,9 +21,14 @@ public class ConsumerCommunication implements Runnable{
         consumer.subscribe(Arrays.asList(topic));
         while (running) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-            for (ConsumerRecord<String, String> record : records)
-                System.out.printf("FRIEND: %s\n",  record.value());
+            if(records.count() > 0) {
+                System.out.println("Parsing records for consumer. Nr of records: " + records.count());
+
+                for (ConsumerRecord<String, String> record : records)
+                    System.out.printf("FRIEND: %s\n", record.value());
+            }
         }
+        consumer.close(); //added
     }
 
     public void stopConsumer(){

@@ -29,10 +29,11 @@ public class ProducerCommunication implements Runnable{
         KafkaProducer<String, String> producer = sender.getProducer();
 
         producer.initTransactions();
-
+        System.out.println("Transaction initialized, begin transaction");
         try {
             producer.beginTransaction();
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("Inside ProducerCommunication - id: " + id);
             while(true) {
                 System.out.println("\n" +
                         "ME:"
@@ -43,18 +44,19 @@ public class ProducerCommunication implements Runnable{
                 }
                 producer.send(sender.getRecord(topic, "1",message));
             }
+            producer.commitTransaction(); //added here, commented below
 
-
-        } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException e) {
+        } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException  e) {
             // We can't recover from these exceptions, so our only option is to close the producer and exit.
+            System.out.println("Serious exception encountered, closing producer");
             producer.close();
         } catch (KafkaException e) {
             // For all other exceptions, just abort the transaction and try again.
             producer.abortTransaction();
-        } catch (IOException e) {
+        } catch (IOException  e) {
             e.printStackTrace();
         }
-        producer.commitTransaction();
+        //producer.commitTransaction();
         producer.close();
     }
 }

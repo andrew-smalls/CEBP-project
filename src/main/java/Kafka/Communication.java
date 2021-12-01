@@ -21,23 +21,26 @@ public class Communication {
         System.out.println("Welcome!\n\n" +
                 "Please enter an id: "
         );
-        String id= br.readLine();
+        String id = br.readLine();
 
         Thread.currentThread().setName("Principal");
 
-        Thread producerThread= new Thread(new ProducerCommunication(id),"Producer");
+        Thread producerThread = new Thread(new ProducerCommunication(id), "Producer");
         producerThread.start();
-        ConsumerCommunication consumer=new ConsumerCommunication();
+
+        ConsumerCommunication consumer = new ConsumerCommunication();
         Thread consumerThread = new Thread(consumer, "Consumer");
         consumerThread.start();
 
-        System.out.println("Am ajuns aici!!\n"+Thread.currentThread().getName());
+        System.out.println("Am ajuns aici!!\n" + Thread.currentThread().getName());
 
-        while(true){
-            if(!producerThread.isAlive()){
+        while (true) {
+            if (!producerThread.isAlive()) {
+                System.out.println("Id: " + id + " producer is not alive, breaking");
+                consumer.stopConsumer();
                 break;
             }
-        }
 
+        }
     }
 }
