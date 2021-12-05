@@ -42,5 +42,6 @@ public class Communication {
             }
 
         }
+        System.out.println("Communication closing...");
     }
 }

@@ -16,6 +16,8 @@ public class ConsumerCommunication implements Runnable{
         String topic = "TestTopic";
         String bootstrapServers_sender = "localhost:9092";
 
+        System.out.println("Consumer started");
+
         Consumer receiver=new Consumer(bootstrapServers_sender,"test");
         KafkaConsumer<String, String> consumer = receiver.getConsumer();
         consumer.subscribe(Arrays.asList(topic));

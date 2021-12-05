@@ -23,6 +23,8 @@ public class ProducerCommunication implements Runnable{
         String topic = "TestTopic";
         String message = "";
 
+        System.out.println("Producer started");
+
         String bootstrapServers_sender = "localhost:9092";
 
         Producer sender = new Producer(bootstrapServers_sender,id);
@@ -44,7 +46,7 @@ public class ProducerCommunication implements Runnable{
                 }
                 producer.send(sender.getRecord(topic, "1",message));
             }
-            producer.commitTransaction(); //added here, commented below
+            //producer.commitTransaction(); //added here, commented below
 
         } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException  e) {
             // We can't recover from these exceptions, so our only option is to close the producer and exit.
