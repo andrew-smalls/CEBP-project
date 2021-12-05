@@ -10,7 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class ProducerCommunication implements Runnable{
+public class ProducerCommunication extends ObservedSubject implements Runnable{
 
     private String id;
 
@@ -23,7 +23,7 @@ public class ProducerCommunication implements Runnable{
         String topic = "TestTopic";
         String message = "";
 
-        System.out.println("Producer started");
+        //System.out.println("Producer started");
 
         String bootstrapServers_sender = "localhost:9092";
 
@@ -31,7 +31,7 @@ public class ProducerCommunication implements Runnable{
         KafkaProducer<String, String> producer = sender.getProducer();
 
         producer.initTransactions();
-        System.out.println("Transaction initialized, begin transaction");
+        //System.out.println("Transaction initialized, begin transaction");
         try {
             producer.beginTransaction();
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -46,7 +46,7 @@ public class ProducerCommunication implements Runnable{
                 }
                 producer.send(sender.getRecord(topic, "1",message));
             }
-            //producer.commitTransaction(); //added here, commented below
+            producer.commitTransaction(); //added here, commented below
 
         } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException  e) {
             // We can't recover from these exceptions, so our only option is to close the producer and exit.

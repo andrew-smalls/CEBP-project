@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 public class Communication {
 
+
     public static void main(String[] args) throws ClassNotFoundException, InterruptedException, IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -32,11 +33,18 @@ public class Communication {
         Thread consumerThread = new Thread(consumer, "Consumer");
         consumerThread.start();
 
-        System.out.println("Am ajuns aici!!\n" + Thread.currentThread().getName());
+        //System.out.println("Am ajuns aici!!\n" + Thread.currentThread().getName());
+
+        //Server server = Server.getInstance();
+        consumer.register(Server.getInstance());  //register the subject (consumer, in this case) to our observer (server)
+        (Server.getInstance()).setSubject(consumer); //attach the observer to the subject
+        //server.update();            // update
+        consumer.postMessage("connected", id); //notify server of new client logging in
 
         while (true) {
             if (!producerThread.isAlive()) {
                 System.out.println("Id: " + id + " producer is not alive, breaking");
+                consumer.postMessage("disconnected", id);
                 consumer.stopConsumer();
                 break;
             }

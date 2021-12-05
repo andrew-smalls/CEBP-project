@@ -1,0 +1,1 @@
+java.lang.NoSuchMethodException: no such method: class.main(String[])void/invokeStatic   -> mvn clean install (if you're sure the "main" method actually exists)
