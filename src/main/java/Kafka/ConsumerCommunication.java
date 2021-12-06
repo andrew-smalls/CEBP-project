@@ -10,15 +10,21 @@ import java.util.Arrays;
 public class ConsumerCommunication implements Runnable{
 
     private boolean running=true;
+    private final String groupId;
+
+    public ConsumerCommunication(String groupId){
+        this.groupId=groupId;
+    }
 
     @Override
     public void run() {
-        String topic = "TestTopic";
+        String topic = "TwoConsumers";
         String bootstrapServers_sender = "localhost:9092";
 
-        Consumer receiver=new Consumer(bootstrapServers_sender,"test");
+        Consumer receiver=new Consumer(bootstrapServers_sender,groupId);
         KafkaConsumer<String, String> consumer = receiver.getConsumer();
         consumer.subscribe(Arrays.asList(topic));
+        System.out.println("Consumer started with group id: "+groupId);
         while (running) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             if(records.count() > 0) {

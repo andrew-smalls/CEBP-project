@@ -19,16 +19,18 @@ public class Communication {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Welcome!\n\n" +
-                "Please enter an id: "
+                "Please enter transactional id: "
         );
-        String id = br.readLine();
+        String tid = br.readLine();
+        System.out.println("\nPlease enter group id: ");
+        String gid = br.readLine();
 
         Thread.currentThread().setName("Principal");
 
-        Thread producerThread = new Thread(new ProducerCommunication(id), "Producer");
+        Thread producerThread = new Thread(new ProducerCommunication(tid), "Producer");
         producerThread.start();
 
-        ConsumerCommunication consumer = new ConsumerCommunication();
+        ConsumerCommunication consumer = new ConsumerCommunication(gid);
         Thread consumerThread = new Thread(consumer, "Consumer");
         consumerThread.start();
 
@@ -36,7 +38,7 @@ public class Communication {
 
         while (true) {
             if (!producerThread.isAlive()) {
-                System.out.println("Id: " + id + " producer is not alive, breaking");
+                System.out.println("Id: " + tid + " producer is not alive, breaking");
                 consumer.stopConsumer();
                 break;
             }

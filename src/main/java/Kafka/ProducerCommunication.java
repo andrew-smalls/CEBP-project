@@ -20,7 +20,7 @@ public class ProducerCommunication implements Runnable{
 
     @Override
     public void run() {
-        String topic = "TestTopic";
+        String topic = "TwoConsumers";
         String message = "";
 
         String bootstrapServers_sender = "localhost:9092";
