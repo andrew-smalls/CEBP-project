@@ -1,7 +1,6 @@
 package Server;
 
 import Client.Consumer;
-import Kafka.Server;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 

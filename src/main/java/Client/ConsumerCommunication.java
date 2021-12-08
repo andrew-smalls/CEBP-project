@@ -1,5 +1,7 @@
 package Client;
 
+import Vars.ServerAddress;
+import Thread.NotifyingThread;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -7,25 +9,27 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import java.time.Duration;
 import java.util.Arrays;
 
-public class ConsumerCommunication implements Runnable{
+public class ConsumerCommunication extends NotifyingThread implements Runnable {
 
-    private boolean running=true;
     private final String groupId;
 
-    public ConsumerCommunication(String groupId){
+    public ConsumerCommunication(String groupId, String threadName){
         this.groupId=groupId;
+        this.setName(threadName);
     }
 
     @Override
-    public void run() {
+    public void doRun() { //this method will call run() and then will call notifyListeners()
         String topic = "TwoConsumers";
-        String bootstrapServers_sender = "localhost:9092";
 
-        Consumer receiver=new Consumer(bootstrapServers_sender,groupId);
+        Consumer receiver=new Consumer(ServerAddress.LOCALHOST.getAddress(), groupId);
         KafkaConsumer<String, String> consumer = receiver.getConsumer();
         consumer.subscribe(Arrays.asList(topic));
         System.out.println("Consumer started with group id: "+groupId);
-        while (running) {
+
+        while (running)
+        {
+
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
             if(records.count() > 0) {
                 System.out.println("Parsing records for consumer. Nr of records: " + records.count());
@@ -34,10 +38,10 @@ public class ConsumerCommunication implements Runnable{
                     System.out.printf("FRIEND: %s\n", record.value());
             }
         }
-        consumer.close(); //added
+
+        System.out.println("Closing consumer");
+        consumer.close();
+
     }
 
-    public void stopConsumer(){
-        running=false;
-    }
 }

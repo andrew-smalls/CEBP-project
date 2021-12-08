@@ -11,7 +11,7 @@ public class PingProducer implements Runnable{
     @Override
     public void run() {
 
-        Producer sender = new Producer(ServerAddress.LOCALHOST, id);
+        Producer sender = new Producer(String.valueOf(ServerAddress.LOCALHOST));
         KafkaProducer<String, String> producer = sender.getProducer();
 
         producer.initTransactions();

@@ -1,28 +1,26 @@
 import Client.Client;
-import Client.ConsumerCommunication;
-import Client.ProducerCommunication;
-import Tools.UniqueIdGenerator;
+import Vars.ClientStatus;
 
 import java.io.IOException;
 
 public class ClientCommunication {
 
-    public static void main(String[] args) throws ClassNotFoundException, InterruptedException, IOException {
+    public static void main(String[] args) {
 
         Client client = new Client();
 
+        client.startCommunication();
 
-
-
-
-
-        while (true) {
-            if (!producerThread.isAlive()) {
-                System.out.println("Id: " + id + " producer is not alive, breaking");
-                consumer.stopConsumer();
-                break;
-            }
-
+        while (!client.getClientStatus().equals(ClientStatus.DEAD)) //momentan, facem check-ul constant. Ulterior, trebuie sa trimita clientul ping (ALIVE) ->  cand nu mai trimite ping, il declaram DEAD
+        {
+            //TimeUnit.SECONDS.sleep(2); //daca avem pauza aici, o sa iasa cand scrii "exit". Fara pauza, nu vrea sa iasa
+            //System.out.println(client.getClientStatus());
         }
+
+        if(client.getClientStatus().equals(ClientStatus.DEAD))
+            System.out.println("Client " + client.getClientId() + " ended communication");
     }
+
+
+
 }

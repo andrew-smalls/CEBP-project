@@ -1,39 +1,37 @@
 package Client;
 
+import Vars.ServerAddress;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.errors.AuthorizationException;
 import org.apache.kafka.common.errors.OutOfOrderSequenceException;
 import org.apache.kafka.common.errors.ProducerFencedException;
 
+import Thread.NotifyingThread;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class ProducerCommunication implements Runnable{
+public class ProducerCommunication extends NotifyingThread implements Runnable{
 
     private String id;
 
-    public ProducerCommunication(String id){
-        this.id=id;
+    public ProducerCommunication(String id, String threadName){
+        this.id = id;
+        this.setName(threadName);
     }
 
     @Override
-    public void run() {
+    public void doRun() {
         String topic = "TwoConsumers";
         String message = "";
-
-        String bootstrapServers_sender = "localhost:9092";
-
-        Producer sender = new Producer(bootstrapServers_sender,id);
+        Producer sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()), id);  //Currently, producers are ID'd using an id generator
         KafkaProducer<String, String> producer = sender.getProducer();
 
         producer.initTransactions();
-        System.out.println("Transaction initialized, begin transaction");
         try {
             producer.beginTransaction();
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            System.out.println("Inside ProducerCommunication - id: " + id);
             while(true) {
                 System.out.println("\n" +
                         "ME:"
@@ -42,9 +40,9 @@ public class ProducerCommunication implements Runnable{
                 if(message.equals("exit")){
                     break;
                 }
-                producer.send(sender.getRecord(topic, "1",message));
+                producer.send(sender.getRecord(topic,"1", message));
             }
-            producer.commitTransaction(); //added here, commented below
+            producer.commitTransaction();
 
         } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException  e) {
             // We can't recover from these exceptions, so our only option is to close the producer and exit.
@@ -56,7 +54,7 @@ public class ProducerCommunication implements Runnable{
         } catch (IOException  e) {
             e.printStackTrace();
         }
-        //producer.commitTransaction();
+        System.out.println("Closing producer");
         producer.close();
     }
 }
