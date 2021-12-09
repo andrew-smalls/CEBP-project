@@ -12,7 +12,4 @@ public class ClientCommunication {
         if(client.getClientStatus().equals(ClientStatus.DEAD))
             System.out.println("Client " + client.getClientId() + " ended communication");
     }
-
-    public static void doNothing(){ int i = 0; i++;}
-
 }
