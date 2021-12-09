@@ -1,5 +1,5 @@
 package Thread;
 
 public interface ThreadCompleteListener {
-    void notifyOfThreadComplete(final Thread thread);
+    void notifyOfThreadComplete(final Thread thread) throws InterruptedException;
 }

@@ -1,7 +1,5 @@
 package Thread;
 
-import Client.ProducerCommunication;
-
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -19,7 +17,7 @@ public class NotifyingThread extends Thread implements Runnable { // amin https:
         listeners.remove(listener);
     }
 
-    private final void notifyListeners() {
+    private final void notifyListeners() throws InterruptedException {
         for (ThreadCompleteListener listener : listeners) {
             listener.notifyOfThreadComplete(this);
         }
@@ -30,7 +28,11 @@ public class NotifyingThread extends Thread implements Runnable { // amin https:
         try {
             doRun();
         } finally {
-            notifyListeners();
+            try {
+                notifyListeners();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
