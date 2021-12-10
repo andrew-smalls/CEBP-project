@@ -1,9 +1,11 @@
 import Client.Client;
 import Vars.ClientStatus;
 
+import java.io.IOException;
+
 public class ClientCommunication {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         Client client = new Client();
 

@@ -21,21 +21,22 @@ public class ConsumerCommunication extends NotifyingThread implements Runnable {
     @Override
     public void doRun() { //this method will call run() and then will call notifyListeners()
         String topic = "TwoConsumers";
+        String topic = "TwoConsumers";
 
         Consumer receiver=new Consumer(ServerAddress.LOCALHOST.getAddress(), groupId);
-        KafkaConsumer<String, String> consumer = receiver.getConsumer();
+        KafkaConsumer<String, Message> consumer = receiver.getConsumer();
         consumer.subscribe(Arrays.asList(topic));
         System.out.println("Consumer started with group id: "+groupId);
 
         while (running)
         {
 
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+            ConsumerRecords<String, Message> records = consumer.poll(Duration.ofMillis(100));
             if(records.count() > 0) {
                 System.out.println("Parsing records for consumer. Nr of records: " + records.count());
 
-                for (ConsumerRecord<String, String> record : records)
-                    System.out.printf("FRIEND: %s\n", record.value());
+                for (ConsumerRecord<String, Message> record : records)
+                    System.out.print(record.value());
             }
         }
 

@@ -5,14 +5,30 @@ import Vars.ClientStatus;
 
 import Thread.ThreadCompleteListener;
 import Thread.NotifyingThread;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class Client implements ThreadCompleteListener {
 
     private final static String id = String.valueOf(UniqueIdGenerator.generateID());
     private static ClientStatus clientStatus = ClientStatus.DEAD;
     private NotifyingThread producerThread, consumerThread;
+    private String username;
 
-    public Client()
-    {
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Client() throws IOException {
+        System.out.println("Please enter your username: ");
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+        this.username = input.readLine();
         clientStatus = ClientStatus.ALIVE;
     }
 
@@ -29,7 +45,7 @@ public class Client implements ThreadCompleteListener {
     }
 
     public void startProducerThread(){
-        producerThread = new ProducerCommunication(id, "Producer");
+        producerThread = new ProducerCommunication(id, username,"Producer");
         producerThread.addListener(this);
         System.out.println("Starting producer");
         producerThread.start();

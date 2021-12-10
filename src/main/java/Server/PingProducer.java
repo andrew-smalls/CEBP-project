@@ -1,5 +1,6 @@
 package Server;
 
+import Client.Message;
 import Client.Producer;
 import Vars.ServerAddress;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -12,7 +13,7 @@ public class PingProducer implements Runnable{
     public void run() {
 
         Producer sender = new Producer(String.valueOf(ServerAddress.LOCALHOST));
-        KafkaProducer<String, String> producer = sender.getProducer();
+        KafkaProducer<String, Message> producer = sender.getProducer();
 
         producer.initTransactions();
     }
