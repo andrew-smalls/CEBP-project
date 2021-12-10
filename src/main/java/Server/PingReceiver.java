@@ -4,7 +4,7 @@ import Client.Producer;
 import Vars.ServerAddress;
 import org.apache.kafka.clients.producer.KafkaProducer;
 
-public class PingProducer implements Runnable{
+public class PingReceiver implements Runnable{
     private static final String topic = "client_pings_topic";
 
 

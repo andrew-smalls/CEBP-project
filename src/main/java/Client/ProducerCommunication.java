@@ -25,12 +25,11 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
     public void doRun() {
         String topic = "TwoConsumers";
         String message = "";
-        Producer sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()), id);  //Currently, producers are ID'd using an id generator
+        Producer sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));  //Currently, producers are ID'd using an id generator
         KafkaProducer<String, String> producer = sender.getProducer();
 
-        producer.initTransactions();
+
         try {
-            producer.beginTransaction();
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             while(true) {
                 System.out.println("\n" +
@@ -42,7 +41,7 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
                 }
                 producer.send(sender.getRecord(topic,"1", message));
             }
-            producer.commitTransaction();
+
 
         } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException  e) {
             // We can't recover from these exceptions, so our only option is to close the producer and exit.

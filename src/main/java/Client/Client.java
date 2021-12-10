@@ -10,14 +10,16 @@ public class Client implements ThreadCompleteListener {
     private final static String id = String.valueOf(UniqueIdGenerator.generateID());
     private static ClientStatus clientStatus = ClientStatus.DEAD;
     private NotifyingThread producerThread, consumerThread;
+    private PingSender pingSender;
+    private String pingTopic="client_pings_topic";
 
     public Client()
     {
+        pingSender=new PingSender();
         clientStatus = ClientStatus.ALIVE;
     }
 
     public void startCommunication() throws InterruptedException {
-        startPingThread();
         startProducerThread();
         startConsumerThread();
 
@@ -25,7 +27,11 @@ public class Client implements ThreadCompleteListener {
 
     public void startPingThread()
     {
+        pingSender.pingServer(pingTopic,String.valueOf(UniqueIdGenerator.generateID()));
+    }
 
+    public void stopPingThread(){
+        pingSender.cancelPings();
     }
 
     public void startProducerThread(){
