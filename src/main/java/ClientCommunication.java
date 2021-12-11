@@ -39,8 +39,6 @@ public class ClientCommunication {
                 }catch (IOException e){
                     e.printStackTrace();
                 }
-
-                //System.out.println("Iti dam conversatie mai tarziu\n");
             }
         }
 

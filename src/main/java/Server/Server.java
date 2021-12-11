@@ -2,15 +2,22 @@ package Server;
 
 public class Server {
     private static final String groupId = "server_group";
-    private static final String pings_topic = "client_pings_topic";
+    private static final String pingTopic="client_pings_topic";
 
-    public Server(){}
+    public Server(){
+    }
 
-    public void startPingThread(){
-        Listener listener = new Listener(groupId, pings_topic);
+    public void startListenerThread(){
+        Listener listener = new Listener(groupId, pingTopic);
         Thread listenerThread = new Thread(listener, "Listener");
+
+        System.out.println("Started listener thread");
         listenerThread.start();
     }
 
+    public void onlineUpdate()
+    {
+
+    }
 
 }
