@@ -30,7 +30,7 @@ public class Client implements ThreadCompleteListener {
         pingSender.pingServer(pingTopic,String.valueOf(UniqueIdGenerator.generateID()));
     }
 
-    public void stopPingThread(){
+    public void stopPingThread() throws InterruptedException {
         pingSender.cancelPings();
     }
 
