@@ -1,10 +1,9 @@
 package Server;
 
 import Client.Consumer;
-import Vars.ServerAddress;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -27,13 +26,14 @@ public class Listener implements Runnable{
 
     @Override
     public void run() {
+        String bootstrapServers_sender = "localhost:9092";
 
         Consumer receiver = new Consumer(String.valueOf(ServerAddress.LOCALHOST.getAddress()), groupId);
-        KafkaConsumer<String, String> consumer = receiver.getConsumer();
+        KafkaConsumer<String, Message> consumer = receiver.getConsumer();
         consumer.subscribe(Arrays.asList(pingTopic));
 
         while (running) {
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+            ConsumerRecords<String, Message> records = consumer.poll(Duration.ofMillis(100));
             if(records.count() > 0) {
                 System.out.println("Received ping");
                 //update lista cu timestamps aici
