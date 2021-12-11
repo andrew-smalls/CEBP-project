@@ -15,18 +15,20 @@ import java.io.InputStreamReader;
 public class ProducerCommunication extends NotifyingThread implements Runnable{
 
     private String id;
+    private String username;
 
-    public ProducerCommunication(String id, String threadName){
+    public ProducerCommunication(String id, String username, String threadName){
         this.id = id;
+        this.username = username;
         this.setName(threadName);
     }
 
     @Override
     public void doRun() {
         String topic = "TwoConsumers";
-        String message = "";
-        Producer sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));  //Currently, producers are ID'd using an id generator
-        KafkaProducer<String, String> producer = sender.getProducer();
+        Message message = new Message();
+        Producer sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
+        KafkaProducer<String, Message> producer = sender.getProducer();
 
 
         try {
@@ -35,8 +37,9 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
                 System.out.println("\n" +
                         "ME:"
                 );
-                message= br.readLine();
-                if(message.equals("exit")){
+                message.setUsername(username);
+                message.setContent(br.readLine());
+                if(message.getContent().equals("exit")){
                     break;
                 }
                 producer.send(sender.getRecord(topic,"1", message));

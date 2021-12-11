@@ -1,7 +1,10 @@
 package Client;
 
+import Kafka.JsonSerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Properties;
 
@@ -13,16 +16,16 @@ public class Producer {
         properties = createProperties(bootstrapServers);
     }
 
-    public KafkaProducer<String, String> getProducer()
+    public KafkaProducer<String, Message> getProducer()
     {
-        KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
+        KafkaProducer<String, Message> producer = new KafkaProducer<>(properties);
         return producer;
     }
 
     //If no partition is specified but a key is present a partition will be chosen using a hash of the key.
     // If neither key nor partition is present a partition will be assigned in a round-robin fashion.
-    public ProducerRecord<String, String> getRecord(String topic,  String key, String message) {
-        ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, key, message);
+    public ProducerRecord<String, Message> getRecord(String topic,  String key, Message message) {
+        ProducerRecord<String, Message> record = new ProducerRecord<>(topic, key, message);
         return record;
     }
 
@@ -43,8 +46,8 @@ public class Producer {
         props.put("batch.size", 16384); //Specify buffer size in config
         props.put("linger.ms", 1); //Reduce the no of requests less than 0
         props.put("buffer.memory", 33554432); //The buffer.memory controls the total amount of memory available to the producer for buffering.
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
         return props;
     }

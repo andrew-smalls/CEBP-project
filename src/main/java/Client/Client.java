@@ -12,11 +12,12 @@ public class Client implements ThreadCompleteListener {
     private NotifyingThread producerThread, consumerThread;
     private PingSender pingSender;
     private String pingTopic="client_pings_topic";
-
-    public Client()
+    private String username;
+    public Client(String username)
     {
         pingSender=new PingSender();
         clientStatus = ClientStatus.ALIVE;
+        this.username = username;
     }
 
     public void startCommunication() throws InterruptedException {
@@ -27,7 +28,11 @@ public class Client implements ThreadCompleteListener {
 
     public void startPingThread()
     {
-        pingSender.pingServer(pingTopic,String.valueOf(UniqueIdGenerator.generateID()));
+        Message message = new Message();
+        message.setUsername(username);
+        message.setType(MessageType.PING_MESSAGE);
+        message.setContent(String.valueOf(System.currentTimeMillis()));
+        pingSender.pingServer(pingTopic,message);
     }
 
     public void stopPingThread() throws InterruptedException {
@@ -36,7 +41,7 @@ public class Client implements ThreadCompleteListener {
     }
 
     public void startProducerThread(){
-        producerThread = new ProducerCommunication(id, "Producer");
+        producerThread = new ProducerCommunication(id, username, "Producer");
         producerThread.addListener(this);
         System.out.println("Starting producer");
         producerThread.start();

@@ -11,13 +11,22 @@ public class ClientCommunication {
 
     public static void main(String[] args) throws InterruptedException {
         String answer;
+        String username = "";
         ClientMenu menu=new ClientMenu();
-        Client client = new Client();
-        client.startPingThread();
+
 
         System.out.println("Welcome!\n");
-
+        System.out.println("Type your name: ");
         BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+        try{
+            username = br.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Client client = new Client(username);
+        client.startPingThread();
+
         while(true) {
             menu.show();
             try{
@@ -35,7 +44,7 @@ public class ClientCommunication {
                 System.out.println("Type a valid username: ");
                 try{
                     name=br.readLine();
-                    //client.startCommunication();
+                    client.startCommunication();
                 }catch (IOException e){
                     e.printStackTrace();
                 }
@@ -46,8 +55,8 @@ public class ClientCommunication {
 
 
         client.stopPingThread();
-        System.out.println("Done\n");
-        System.out.println("Thread nr: "+Thread.activeCount());
+        //System.out.println("Done\n");
+        //System.out.println("Thread nr: "+Thread.activeCount());
         Thread.sleep(1000);
 
     }
