@@ -1,2 +1,5 @@
 mvn compile
 mvn exec:java -Dexec.mainClass=Kafka.Communication
+
+Create docker images: go to ...\src\main\resources\files
+In the terminal, enter: docker-compose -f docker-compose.yml up -d
