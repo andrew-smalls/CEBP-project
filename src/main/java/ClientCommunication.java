@@ -15,7 +15,6 @@ public class ClientCommunication {
         Client client = new Client();
         client.startPingThread();
 
-
         System.out.println("Welcome!\n");
 
         BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
@@ -50,6 +49,7 @@ public class ClientCommunication {
         System.out.println("Done\n");
         System.out.println("Thread nr: "+Thread.activeCount());
         Thread.sleep(1000);
+
     }
 
 }

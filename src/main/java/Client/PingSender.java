@@ -19,18 +19,31 @@ class DaemonFactory implements ThreadFactory
 public class PingSender {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(new DaemonFactory());
     private ScheduledFuture<?> pingHandler;
+    private static int i;
     Runnable ping;
     public void pingServer(String topic,String message){
+
+        //message = message + " " + i++;
          ping=new Runnable() {
             @Override
             public void run() {
+                i++;
                 Producer sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
                 KafkaProducer<String, String> producer = sender.getProducer();
                 producer.send(sender.getRecord(topic,"1", message));
-                System.out.println("Sent ping\n");
+
+                System.out.println("Sent ping, " + i + "\n");
+                //System.out.println("Sent ping\n");
             }
-        };
-        pingHandler=scheduler.scheduleAtFixedRate(ping,100,500, TimeUnit.MILLISECONDS);
+            public void cancel()
+            {
+
+            }
+
+
+         };
+        pingHandler = scheduler.scheduleAtFixedRate(ping,100,500, TimeUnit.MILLISECONDS);
+        //scheduler.shutdown();
 
     }
 
@@ -38,6 +51,5 @@ public class PingSender {
         pingHandler.cancel(true);
         scheduler.shutdown();
         System.out.println("Scheduler is shutdown: "+scheduler.isShutdown()+"\n");
-
     }
 }

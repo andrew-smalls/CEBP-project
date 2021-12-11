@@ -31,6 +31,7 @@ public class Client implements ThreadCompleteListener {
     }
 
     public void stopPingThread() throws InterruptedException {
+        System.out.println("Signal ping to stop now");
         pingSender.cancelPings();
     }
 
