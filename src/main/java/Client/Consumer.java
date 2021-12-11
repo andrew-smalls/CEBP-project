@@ -1,5 +1,6 @@
-package Kafka;
+package Client;
 
+import Kafka.JsonDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -20,24 +21,24 @@ public class Consumer {
         properties = createProperties(bootstrapServer_receiver, groupId);
     }
 
-    public KafkaConsumer<String, String> getConsumer()
+    public KafkaConsumer<String, Message> getConsumer()
     {
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(properties);
+        KafkaConsumer<String, Message> consumer = new KafkaConsumer<>(properties);
         return consumer;
     }
 
-    public void subscribe(KafkaConsumer<String, String> consumer, String topic)
+    public void subscribe(KafkaConsumer<String, Message> consumer, String topic)
     {
         consumer.subscribe(Arrays.asList(topic));
     }
 
-    public void receiveMessage(KafkaConsumer<String, String> consumer) throws ClassNotFoundException {
+    public void receiveMessage(KafkaConsumer<String, Message> consumer) throws ClassNotFoundException {
         Logger logger = LoggerFactory.getLogger(Class.forName(Consumer.class.getName()));
 
         while (true)
         {
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-            for (ConsumerRecord<String, String> record : records)
+            ConsumerRecords<String, Message> records = consumer.poll(Duration.ofMillis(100));
+            for (ConsumerRecord<String, Message> record : records)
             {
                 logger.info("Key: " + record.key() + ", Value:" + record.value());
                 logger.info("Partition:" + record.partition() + ",Offset:" + record.offset());
@@ -50,7 +51,7 @@ public class Consumer {
         Properties properties = new Properties();
         properties.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer_receiver);
         properties.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        properties.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         properties.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         properties.setProperty("enable.auto.commit", "true");
