@@ -18,11 +18,9 @@ public class Message {
 
     public Message(MessageType type) {
         this.type = type;
-        this.username = "Andrei";
     }
     public Message() {
         this.type = SYSTEM_MESSAGE;
-        this.username = "Andrei";
     }
 
     public String getContent() {
