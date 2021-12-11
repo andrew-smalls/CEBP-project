@@ -1,7 +1,5 @@
 package Client;
 
-import static Client.MessageType.SYSTEM_MESSAGE;
-
 public class Message {
     private MessageType type;
 
@@ -16,11 +14,18 @@ public class Message {
         this.username = username;
     }
 
+    public MessageType getType() {
+        return type;
+    }
+
+    public void setType(MessageType type) {
+        this.type = type;
+    }
+
     public Message(MessageType type) {
         this.type = type;
     }
     public Message() {
-        this.type = SYSTEM_MESSAGE;
     }
 
     public String getContent() {

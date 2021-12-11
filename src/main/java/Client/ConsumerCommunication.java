@@ -32,7 +32,7 @@ public class ConsumerCommunication extends NotifyingThread implements Runnable {
 
             ConsumerRecords<String, Message> records = consumer.poll(Duration.ofMillis(100));
             if(records.count() > 0) {
-                System.out.println("Parsing records for consumer. Nr of records: " + records.count());
+                // System.out.println("Parsing records for consumer. Nr of records: " + records.count());
 
                 for (ConsumerRecord<String, Message> record : records)
                     System.out.print(record.value());

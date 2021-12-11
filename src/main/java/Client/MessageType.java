@@ -1,5 +1,7 @@
 package Client;
 
 public enum MessageType {
-    SYSTEM_MESSAGE
+    PING_MESSAGE,
+    TOPIC_REQUEST_MESSAGE,
+    REGULAR_MESSAGE
 }
