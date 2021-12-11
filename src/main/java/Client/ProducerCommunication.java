@@ -21,7 +21,6 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
         this.id = id;
         this.username = username;
         this.setName(threadName);
-
     }
 
     @Override
@@ -31,9 +30,8 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
         Producer sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()), id);  //Currently, producers are ID'd using an id generator
         KafkaProducer<String, Message> producer = sender.getProducer();
 
-        producer.initTransactions();
+
         try {
-            producer.beginTransaction();
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             while(true) {
                 System.out.println("\n" +
@@ -46,7 +44,7 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
                 }
                 producer.send(sender.getRecord(topic,"1", message));
             }
-            producer.commitTransaction();
+
 
         } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException  e) {
             // We can't recover from these exceptions, so our only option is to close the producer and exit.

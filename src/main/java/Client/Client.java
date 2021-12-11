@@ -5,35 +5,21 @@ import Vars.ClientStatus;
 
 import Thread.ThreadCompleteListener;
 import Thread.NotifyingThread;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 public class Client implements ThreadCompleteListener {
 
     private final static String id = String.valueOf(UniqueIdGenerator.generateID());
     private static ClientStatus clientStatus = ClientStatus.DEAD;
     private NotifyingThread producerThread, consumerThread;
-    private String username;
+    private PingSender pingSender;
+    private String pingTopic="client_pings_topic";
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public Client() throws IOException {
-        System.out.println("Please enter your username: ");
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-        this.username = input.readLine();
+    public Client()
+    {
+        pingSender=new PingSender();
         clientStatus = ClientStatus.ALIVE;
     }
 
     public void startCommunication() throws InterruptedException {
-        startPingThread();
         startProducerThread();
         startConsumerThread();
 
@@ -41,11 +27,16 @@ public class Client implements ThreadCompleteListener {
 
     public void startPingThread()
     {
+        pingSender.pingServer(pingTopic,String.valueOf(UniqueIdGenerator.generateID()));
+    }
 
+    public void stopPingThread() throws InterruptedException {
+        System.out.println("Signal ping to stop now");
+        pingSender.cancelPings();
     }
 
     public void startProducerThread(){
-        producerThread = new ProducerCommunication(id, username,"Producer");
+        producerThread = new ProducerCommunication(id, "Producer");
         producerThread.addListener(this);
         System.out.println("Starting producer");
         producerThread.start();

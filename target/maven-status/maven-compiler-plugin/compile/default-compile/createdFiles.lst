@@ -17,3 +17,8 @@ Thread\NotifyingThread.class
 Server\Listener.class
 Client\ConsumerCommunication.class
 Client\Message.class
+Client\PingSender.class
+Client\ClientMenu.class
+Client\PingSender$1.class
+Server\PingReceiver.class
+Client\DaemonFactory.class
