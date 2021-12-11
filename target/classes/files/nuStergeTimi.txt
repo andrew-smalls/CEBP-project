@@ -1,5 +1,0 @@
-mvn compile
-PENTRU CLIENT: mvn exec:java -Dexec.mainClass=ClientCommunication
-PENTRU SERVER: mvn exec:java -Dexec.mainClass=ServerCommunication
-
-creat imagine docker: docker-compose -f docker-compose.yml up -d
