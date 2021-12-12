@@ -1,11 +1,14 @@
 import Server.Server;
 
 public class ServerCommunication {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
-        //Server server = new Server();
-        //server.startServer();
+        Server server = new Server();
+        //server.startListenerThread();
 
-
+        //server.startUpdaterThread();
+        server.parallelism();
+        Thread.sleep(10000);
+        server.cancelParalellism();
     }
 }
