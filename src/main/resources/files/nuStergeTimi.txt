@@ -1,5 +1,24 @@
 mvn compile
 PENTRU CLIENT: mvn exec:java -Dexec.mainClass=ClientCommunication -Dexec.cleanupDaemonThreads=false
 PENTRU SERVER: mvn exec:java -Dexec.mainClass=ServerCommunication
+PENTRU Creare de topics: mvn exec:java -Dexec.mainClass=CreateTopics
 
 creat imagine docker: docker-compose -f docker-compose.yml up -d
+
+Dependinte folosite la create topic, trebuie schimbate ca sa fie compatibile cu ce avem deja.
+
+                  <dependency>
+                      <groupId>org.apache.kafka</groupId>
+                      <artifactId>kafka_2.11</artifactId>
+                      <version>0.11.0.0</version>
+                  </dependency>
+                  <dependency>
+                      <groupId>ru.simplex_software</groupId>
+                      <artifactId>zkutils</artifactId>
+                      <version>1.8</version>
+                  </dependency>
+                  <dependency>
+                      <groupId>com.101tec</groupId>
+                      <artifactId>zkclient</artifactId>
+                      <version>0.8</version>
+                  </dependency>

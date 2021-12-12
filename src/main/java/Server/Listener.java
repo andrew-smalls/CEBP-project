@@ -34,7 +34,7 @@ public class Listener implements Runnable{
         consumer.subscribe(Arrays.asList(pingTopic));
 
         while (running) {
-            ConsumerRecords<String, Message> records = consumer.poll(Duration.ofMillis(100));
+            ConsumerRecords<String, Message> records = consumer.poll(Duration.ofMillis(100)); //Duration.ofMillis(100) inainte
             if(records.count() > 0) {
 
                 System.out.println("Received ping");
