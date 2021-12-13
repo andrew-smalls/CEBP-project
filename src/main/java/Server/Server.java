@@ -34,6 +34,10 @@ public class Server {
         updaterThread.start();
     }
 
+    public void startTopicRequestsListener(){
+        TopicRequestListener topicRequestListener=new TopicRequestListener(groupId);
+    }
+
     public void parallelism() throws InterruptedException {
         Listener listener = new Listener(groupId, pingTopic, clientList);  //pass queue here and in the updater, needs to be visible to both
         Thread listenerThread = new Thread(listener, "Listener");
