@@ -19,7 +19,6 @@ public class Updater implements Runnable{
         while (running)
         {
             Iterator<ClientData> iterator = clientList.iterator();
-            System.out.println("Items in queue at this moment");
             Long currentTimestamp = System.currentTimeMillis();
 
             while (iterator.hasNext()) {   //go through items of the queue that holds the list of users
@@ -29,21 +28,28 @@ public class Updater implements Runnable{
 
                 if(delta > 1000)       //compute time since last timestamp delivered through ping. If more than 1 sec passed, should remove the user
                 {
-                    System.out.println("This user should be removed, inactive for " + delta);
-                    System.out.println("Time for reference" + currentTimestamp);
-                    System.out.println("Time for client" + timestamp);
+                    //System.out.println("User " + tempData.getClientIdentifier() + " should be removed, inactive for " + delta);
+                    tempData.setStatus("offline");
+                    if(clientList.remove(tempData))
+                        System.out.println("Removed inactive user");
                 }
-                    //System.out.println((iterator.next()));
             }
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
     public void cancelUpdater() {
+        this.running = false;
+    }
+
+    public String isAlive() {
+        if(running)
+            return "alive";
+        return "dead";
     }
 }

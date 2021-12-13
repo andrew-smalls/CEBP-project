@@ -38,20 +38,14 @@ public class Listener implements Runnable{
         while (running) {
             ConsumerRecords<String, Message> records = consumer.poll(Duration.ofMillis(100)); //Duration.ofMillis(100) inainte
             if(records.count() > 0) {
-
-                System.out.println("Received ping");
-
-                //spawn a new thread here that will actually update the queue?
                 for (ConsumerRecord<String, Message> record : records) {
                     if(record.value().getType().toString().equals(MessageType.PING_MESSAGE.getType())) //check if the record is actually a ping
                     {
-                        System.out.println("Received ping from "  + record.value().getUsername());
 
                         timestamper = new Runnable()
                         {
                             @Override
                             public void run() {
-                                System.out.println("Started new thread to update timestamp fir "  + record.value().getUsername());
 
                                 String clientIdentifier = record.value().getUsername();
                                 String timestamp = String.valueOf(System.currentTimeMillis());
@@ -66,27 +60,13 @@ public class Listener implements Runnable{
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
-                                /*
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-
-                                 */
-
                             }
                         };
                         Future resultTimestamper = executorService.submit(timestamper);
 
                     }
-
                 }
-
             }
-
-
-
         }
         consumer.close();
     }
@@ -99,7 +79,12 @@ public class Listener implements Runnable{
         } catch (InterruptedException e) {
             executorService.shutdownNow();
         }
-
+        this.running = false;
     }
 
+    public String isAlive() {
+        if(running)
+            return "alive";
+        return "dead";
+    }
 }

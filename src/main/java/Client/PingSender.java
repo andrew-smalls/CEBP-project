@@ -22,7 +22,7 @@ public class PingSender {
          ping=new Runnable() {
             @Override
             public void run() {
-                    producer.send(sender.getRecord(topic, "1", message));
+                producer.send(sender.getRecord(topic, "1", message));
             }
          };
         pingHandler = scheduler.scheduleAtFixedRate(ping,100,500, TimeUnit.MILLISECONDS);

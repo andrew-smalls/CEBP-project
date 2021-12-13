@@ -5,12 +5,12 @@ import java.util.Objects;
 public class ClientData {
     private String clientIdentifier;
     private String timestamp;
-    private boolean online;
+    private String status;
 
     public ClientData(String clientIdentifier, String timestamp) {
         this.clientIdentifier = clientIdentifier;
         this.timestamp = timestamp;
-        this.online = true;
+        this.status = "online";
     }
 
     public String getClientIdentifier() {
@@ -26,11 +26,13 @@ public class ClientData {
     }
 
     public boolean isOnline() {
-        return online;
+        if(status.equals("online"))
+            return true;
+        return false;
     }
 
-    public void setOnline(boolean online) {
-        this.online = online;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
@@ -38,7 +40,7 @@ public class ClientData {
         return "ClientData{" +
                 "clientIdentifier='" + clientIdentifier + '\'' +
                 ", timestamp='" + timestamp + '\'' +
-                ", online=" + online +
+                ", status=" + status +
                 '}' + "\n";
     }
 

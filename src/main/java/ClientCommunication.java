@@ -53,8 +53,6 @@ public class ClientCommunication {
 
 
         client.stopPingThread();
-        //System.out.println("Done\n");
-        //System.out.println("Thread nr: "+Thread.activeCount());
         Thread.sleep(1000);
 
     }

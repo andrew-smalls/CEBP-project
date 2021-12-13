@@ -51,4 +51,27 @@ public class Server implements ThreadCompleteListener {
         }
     }
 
+    public void getPulse() {
+        System.out.println("Server on:" +
+                "\nListener thread - " + listener.isAlive() +
+                "\nUpdater thread - " + updater.isAlive() +
+                "\nThreads active = " + Thread.activeCount());
+    }
+
+    public void getConnectedClients() {
+        System.out.println("Client list with online clients: ");
+        for(ClientData client : clientList)
+        {
+            if(client.isOnline())
+                System.out.println(client.getClientIdentifier());
+        }
+    }
+
+    public void getListOfClients() {
+        System.out.println("Client list with all clients: ");
+        for(ClientData client : clientList)
+        {
+            System.out.println(client.getClientIdentifier());
+        }
+    }
 }
