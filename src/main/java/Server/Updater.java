@@ -27,7 +27,7 @@ public class Updater implements Runnable{
                 Long timestamp = Long.valueOf(tempData.getTimestamp());
                 Long delta = currentTimestamp - timestamp;
 
-                if(delta > 1)       //compute time since last timestamp delivered through ping. If more than 1 sec passed, should remove the user
+                if(delta > 1000)       //compute time since last timestamp delivered through ping. If more than 1 sec passed, should remove the user
                 {
                     System.out.println("This user should be removed, inactive for " + delta);
                     System.out.println("Time for reference" + currentTimestamp);
@@ -42,5 +42,8 @@ public class Updater implements Runnable{
                 e.printStackTrace();
             }
         }
+    }
+
+    public void cancelUpdater() {
     }
 }
