@@ -1,5 +1,5 @@
 mvn compile
-PENTRU CLIENT: mvn exec:java -Dexec.mainClass=ClientCommunication -Dexec.cleanupDaemonThreads=false
+PENTRU CLIENT: mvn exec:java -Dexec.mainClass=ClientCommunication
 PENTRU SERVER: mvn exec:java -Dexec.mainClass=ServerCommunication
 PENTRU Creare de topics: mvn exec:java -Dexec.mainClass=CreateTopics
 
