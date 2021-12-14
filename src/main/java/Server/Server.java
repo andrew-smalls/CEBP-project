@@ -34,18 +34,9 @@ public class Server implements ThreadCompleteListener {
     }
 
     public void startTopicRequestsListener(){
-        TopicRequestListener topicRequestListener=new TopicRequestListener(groupId);
+        TopicRequestListener topicRequestListener=new TopicRequestListener(groupId,clientList);
     }
 
-    public void parallelism() throws InterruptedException {
-        Listener listener = new Listener(groupId, pingTopic, clientList);  //pass queue here and in the updater, needs to be visible to both
-        Thread listenerThread = new Thread(listener, "Listener");
-
-        Updater updater = new Updater(clientList);
-        Thread updaterThread = new Thread(updater, "Updater");
-
-        tasksQueue.add(listenerThread);
-        tasksQueue.add(updaterThread);
 
     public void cancelListenerThread() throws InterruptedException {
         listener.cancelTimestamper();

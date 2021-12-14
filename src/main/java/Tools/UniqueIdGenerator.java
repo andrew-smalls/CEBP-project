@@ -12,6 +12,6 @@ public class UniqueIdGenerator {
     {
         return "group_" + System.currentTimeMillis();
     }
+*/
 
-     */
 }

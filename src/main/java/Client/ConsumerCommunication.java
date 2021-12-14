@@ -2,6 +2,7 @@ package Client;
 
 import Vars.ServerAddress;
 import Thread.NotifyingThread;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;

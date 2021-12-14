@@ -62,6 +62,9 @@ public class Listener implements Runnable{
                                     if (clientList.contains(clientToAdd)) {
                                         clientList.remove(clientToAdd); //remove old timestamp of client, if it exists
                                     }
+                                    else{
+                                        clientToAdd.setRequestsTopic(record.value().getContent());
+                                    }
                                     clientList.put(clientToAdd);        //insert updated timestamp
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();

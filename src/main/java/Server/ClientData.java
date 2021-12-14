@@ -6,11 +6,13 @@ public class ClientData {
     private String clientIdentifier;
     private String timestamp;
     private boolean online;
+    private String requestsTopic;
 
     public ClientData(String clientIdentifier, String timestamp) {
         this.clientIdentifier = clientIdentifier;
         this.timestamp = timestamp;
         this.online = true;
+        this.requestsTopic=null;
     }
 
     public String getClientIdentifier() {
@@ -31,6 +33,14 @@ public class ClientData {
 
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    public String getRequestsTopic() {
+        return requestsTopic;
+    }
+
+    public void setRequestsTopic(String requestsTopic) {
+        this.requestsTopic = requestsTopic;
     }
 
     @Override
