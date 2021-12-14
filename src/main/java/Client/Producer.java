@@ -49,6 +49,7 @@ public class Producer {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
+        props.put("offsets.retention.minutes", 1); //sets retention to 24 hours
         return props;
     }
 }

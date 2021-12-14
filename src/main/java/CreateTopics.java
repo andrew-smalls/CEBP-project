@@ -1,47 +1,51 @@
+import org.apache.kafka.clients.admin.Admin;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.CreateTopicsResult;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.config.TopicConfig;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 public class CreateTopics {
 
     public static void main(String[] args) throws Exception {
-    /*
-        BasicConfigurator.configure();  // fixes some slf4j bugs
 
-        ZkClient zkClient = null;
-        ZkUtils zkUtils = null;
-        try {
-            String zookeeperHosts = "localhost:2181"; // If multiple zookeeper then -> String zookeeperHosts = "192.168.20.1:2181,192.168.20.2:2181";
-            int sessionTimeOutInMs = 15 * 1000; // 15 secs
-            int connectionTimeOutInMs = 10 * 1000; // 10 secs
+        String name = "andrei_topic";
+        int numPartitions = 1;
+        short replicationFactor = 1;    //if you want bigger replication factor -> you need the same nr of brokers (currently 1)
 
-            zkClient = new ZkClient(zookeeperHosts, sessionTimeOutInMs, connectionTimeOutInMs); //, ZKStringSerializer$.MODULE$);
-            zkClient.setZkSerializer(new ZkSerializer() {
-                @Override
-                public byte[] serialize(Object o) throws ZkMarshallingError {
-                    return ZKStringSerializer.serialize(o);
-                }
+        Properties props = new Properties();
+        props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 
-                @Override
-                public Object deserialize(byte[] bytes) throws ZkMarshallingError {
-                    return ZKStringSerializer.deserialize(bytes);
-                }
-            });
-            zkUtils = new ZkUtils(zkClient, new ZkConnection(zookeeperHosts), false);
+        try (Admin admin = Admin.create(props))
+        {
+            String topicName = "expireTopic5";
+            int partitions = 12;
+            replicationFactor = 1;
+            String retentionMS = "300000"; // 6000 ii aprox 2 min
 
-            String topicName = "testTopic";
-            int noOfPartitions = 2;
-            int noOfReplications = 1;
-            Properties topicConfiguration = new Properties();
+            //Setup topic we want to creae
+            NewTopic topic = new NewTopic(topicName, partitions, replicationFactor);
 
-            AdminUtils.createTopic(zkUtils, topicName, noOfPartitions, noOfReplications, topicConfiguration, RackAwareMode.Enforced$.MODULE$);
+            //Config how the topic will behave from now on
+            Map<String, String> configMap = new HashMap<>();
+            configMap.put(TopicConfig.DELETE_RETENTION_MS_CONFIG, retentionMS);
+            configMap.put(TopicConfig.RETENTION_MS_CONFIG, retentionMS);
+            topic.configs(configMap);
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            if (zkClient != null) {
-                zkClient.close();
-            }
+            //Create the actual topic inside kafka
+            CreateTopicsResult result = admin.createTopics(Collections.singleton(topic.configs(configMap)));
+
+            // Call values() to get the result for a specific topic
+            KafkaFuture<Void> future = result.values().get(topicName);
+
+            // Call get() to block until the topic creation is complete or has failed
+            // if creation failed the ExecutionException wraps the underlying cause.
+            future.get();
         }
-
-     */
     }
 }

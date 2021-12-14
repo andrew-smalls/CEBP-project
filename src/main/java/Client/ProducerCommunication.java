@@ -25,7 +25,7 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
 
     @Override
     public void doRun() {
-        String topic = "TwoConsumers";
+        String topic = "expireTopic5";
         Message message = new Message();
         Producer sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
         KafkaProducer<String, Message> producer = sender.getProducer();

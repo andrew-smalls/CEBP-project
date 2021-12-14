@@ -20,7 +20,7 @@ public class ConsumerCommunication extends NotifyingThread implements Runnable {
 
     @Override
     public void doRun() { //this method will call run() and then will call notifyListeners()
-        String topic = "TwoConsumers";
+        String topic = "expireTopic5";//TwoConsumers
 
         Consumer receiver=new Consumer(ServerAddress.LOCALHOST.getAddress(), groupId);
         KafkaConsumer<String, Message> consumer = receiver.getConsumer();
