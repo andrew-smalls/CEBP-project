@@ -7,10 +7,12 @@ public class ClientData {
     private String timestamp;
     private boolean online;
     private String requestsTopic;
+    private String status;
 
     public ClientData(String clientIdentifier, String timestamp) {
         this.clientIdentifier = clientIdentifier;
         this.timestamp = timestamp;
+        this.status = "online";
         this.online = true;
         this.requestsTopic=null;
     }
@@ -28,11 +30,13 @@ public class ClientData {
     }
 
     public boolean isOnline() {
-        return online;
+        if(status.equals("online"))
+            return true;
+        return false;
     }
 
-    public void setOnline(boolean online) {
-        this.online = online;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getRequestsTopic() {
@@ -48,7 +52,7 @@ public class ClientData {
         return "ClientData{" +
                 "clientIdentifier='" + clientIdentifier + '\'' +
                 ", timestamp='" + timestamp + '\'' +
-                ", online=" + online +
+                ", status=" + status +
                 '}' + "\n";
     }
 
