@@ -5,7 +5,6 @@ import java.util.Objects;
 public class ClientData {
     private String clientIdentifier;
     private String timestamp;
-    private boolean online;
     private String requestsTopic;
     private String status;
 
@@ -13,7 +12,6 @@ public class ClientData {
         this.clientIdentifier = clientIdentifier;
         this.timestamp = timestamp;
         this.status = "online";
-        this.online = true;
         this.requestsTopic=null;
     }
 
