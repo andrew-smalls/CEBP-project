@@ -23,6 +23,8 @@ public class Client implements ThreadCompleteListener {
 
     public void startCommunication() throws InterruptedException {
         startProducerThread();
+
+        //get name of the correspondent here and pass it to consumer thread below
         startConsumerThread();
 
     }
@@ -49,8 +51,8 @@ public class Client implements ThreadCompleteListener {
         producerThread.start();
     }
 
-    public void startConsumerThread() throws InterruptedException {
-        consumerThread = new ConsumerCommunication(id, "Consumer");
+    public void startConsumerThread(String topicName) throws InterruptedException {
+        consumerThread = new ConsumerCommunication(id, "Consumer", topicName);
         consumerThread.addListener(this);
         System.out.println("Starting consumer");
         consumerThread.start();
