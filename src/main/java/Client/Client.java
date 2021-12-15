@@ -7,12 +7,13 @@ import Thread.ThreadCompleteListener;
 import Thread.NotifyingThread;
 public class Client implements ThreadCompleteListener {
 
-    private final static String id = String.valueOf(UniqueIdGenerator.generateID());
+    private static final String id = String.valueOf(UniqueIdGenerator.generateID());
     private static ClientStatus clientStatus = ClientStatus.DEAD;
     private NotifyingThread producerThread, consumerThread;
     private PingSender pingSender;
     private String pingTopic="client_pings_topic";
     private String username;
+    private String requestsTopic;
     public Client(String username)
     {
         pingSender=new PingSender();
@@ -31,7 +32,8 @@ public class Client implements ThreadCompleteListener {
         Message message = new Message();
         message.setUsername(username);
         message.setType(MessageType.PING_MESSAGE);
-        message.setContent(String.valueOf(System.currentTimeMillis()));
+        requestsTopic=String.valueOf(System.currentTimeMillis());
+        message.setContent(requestsTopic);
         pingSender.pingServer(pingTopic,message);
     }
 

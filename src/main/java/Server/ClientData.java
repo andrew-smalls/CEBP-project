@@ -5,12 +5,14 @@ import java.util.Objects;
 public class ClientData {
     private String clientIdentifier;
     private String timestamp;
+    private String requestsTopic;
     private String status;
 
     public ClientData(String clientIdentifier, String timestamp) {
         this.clientIdentifier = clientIdentifier;
         this.timestamp = timestamp;
         this.status = "online";
+        this.requestsTopic=null;
     }
 
     public String getClientIdentifier() {
@@ -33,6 +35,14 @@ public class ClientData {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getRequestsTopic() {
+        return requestsTopic;
+    }
+
+    public void setRequestsTopic(String requestsTopic) {
+        this.requestsTopic = requestsTopic;
     }
 
     @Override

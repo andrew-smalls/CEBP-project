@@ -33,6 +33,10 @@ public class Server implements ThreadCompleteListener {
         updaterThread.start();
     }
 
+    public void startTopicRequestsListener(){
+        TopicRequestListener topicRequestListener=new TopicRequestListener(groupId,clientList);
+    }
+
 
     public void cancelListenerThread() throws InterruptedException {
         listener.cancelTimestamper();
