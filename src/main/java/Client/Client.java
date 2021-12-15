@@ -36,9 +36,14 @@ public class Client implements ThreadCompleteListener {
 
     public void startCommunication(String corespondent) throws InterruptedException {
         String topic = getCorespondingTopic(corespondent);
-        startProducerThread(topic);
-        startConsumerThread(topic);
-
+        if (topic == null)
+        {
+            System.out.println("\nYou don't have a connection with this user\n");
+        }
+        else {
+            startProducerThread(topic);
+            startConsumerThread(topic);
+        }
     }
 
     public void startPingThread()
@@ -79,8 +84,8 @@ public class Client implements ThreadCompleteListener {
         pingSender.cancelPings();
     }
 
-    public void startProducerThread(){
-        producerThread = new ProducerCommunication(id, username, "Producer");
+    public void startProducerThread(String topicName){
+        producerThread = new ProducerCommunication(id, username, topicName);
         producerThread.addListener(this);
         System.out.println("Starting producer");
         producerThread.start();

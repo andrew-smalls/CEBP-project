@@ -16,6 +16,7 @@ public class ServerCommunication {
 
         server.startListenerThread();
         server.startUpdaterThread();
+        server.startTopicRequestsListener();
 
         String answer;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -44,6 +45,7 @@ public class ServerCommunication {
 
         server.cancelListenerThread();
         server.cancelUpdaterThread();
+        server.stopTopicRequestsListener();
         KafkaProducer<String, Message> producer = Producer.getProducer(ServerAddress.LOCALHOST.getAddress());
         producer.close();
         Thread.sleep(100);

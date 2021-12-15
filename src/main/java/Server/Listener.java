@@ -39,6 +39,7 @@ public class Listener implements Runnable{
             ConsumerRecords<String, Message> records = consumer.poll(Duration.ofMillis(100)); //Duration.ofMillis(100) inainte
             if(records.count() > 0) {
                 for (ConsumerRecord<String, Message> record : records) {
+
                     if(record.value().getType().toString().equals(MessageType.PING_MESSAGE.getType())) //check if the record is actually a ping
                     {
 
@@ -46,7 +47,7 @@ public class Listener implements Runnable{
                         {
                             @Override
                             public void run() {
-
+                                //System.out.println("Received ping from " + record.value().getUsername());
                                 String clientIdentifier = record.value().getUsername();
                                 String timestamp = String.valueOf(System.currentTimeMillis());
                                 ClientData clientToAdd = new ClientData(clientIdentifier, timestamp);
@@ -56,9 +57,7 @@ public class Listener implements Runnable{
                                     if (clientList.contains(clientToAdd)) {
                                         clientList.remove(clientToAdd); //remove old timestamp of client, if it exists
                                     }
-                                    else{
-                                        clientToAdd.setRequestsTopic(record.value().getContent());
-                                    }
+                                    clientToAdd.setRequestsTopic(record.value().getContent());
                                     clientList.put(clientToAdd);        //insert updated timestamp
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();

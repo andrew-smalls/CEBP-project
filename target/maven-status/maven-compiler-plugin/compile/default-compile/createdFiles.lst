@@ -5,13 +5,14 @@ Client\Client.class
 Client\PingSender.class
 Client\PingSender$1.class
 ServerCommunication.class
+Kafka\CustomTopic.class
+Client\ResponseListener.class
 Client\ConsumerCommunication.class
 Client\Consumer.class
 Vars\ServerAddress.class
 Thread\ThreadCompleteListener.class
 Server\ClientData.class
-Client\Producer$1.class
-CreateTopics.class
+Client\Corespondent.class
 Server\Server.class
 Server\Updater.class
 Tools\UniqueIdGenerator.class
@@ -19,6 +20,7 @@ Client\ProducerCommunication.class
 Client\ClientMenu.class
 Client\Producer.class
 Server\TopicRequestHandler.class
+Client\ResponseListener$1.class
 Server\TopicRequestListener.class
 Thread\NotifyingThread.class
 Server\Listener.class
