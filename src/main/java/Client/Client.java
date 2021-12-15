@@ -5,25 +5,39 @@ import Vars.ClientStatus;
 
 import Thread.ThreadCompleteListener;
 import Thread.NotifyingThread;
+import Vars.ServerAddress;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.logging.log4j.core.Core;
+
+import java.util.Iterator;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class Client implements ThreadCompleteListener {
 
     private static final String id = String.valueOf(UniqueIdGenerator.generateID());
     private static ClientStatus clientStatus = ClientStatus.DEAD;
     private NotifyingThread producerThread, consumerThread;
+    private ResponseListener responseListenerThread;
     private PingSender pingSender;
     private String pingTopic="client_pings_topic";
     private String username;
     private String requestsTopic;
+    private BlockingQueue<Corespondent> connections;
+
     public Client(String username)
     {
         pingSender=new PingSender();
         clientStatus = ClientStatus.ALIVE;
         this.username = username;
+        this.connections = new LinkedBlockingDeque<>();
     }
 
-    public void startCommunication() throws InterruptedException {
-        startProducerThread();
-        startConsumerThread();
+    public void startCommunication(String corespondent) throws InterruptedException {
+        String topic = getCorespondingTopic(corespondent);
+        startProducerThread(topic);
+        startConsumerThread(topic);
 
     }
 
@@ -35,6 +49,29 @@ public class Client implements ThreadCompleteListener {
         requestsTopic=String.valueOf(System.currentTimeMillis());
         message.setContent(requestsTopic);
         pingSender.pingServer(pingTopic,message);
+    }
+
+    public void requestTopic(String corespondentName)
+    {
+        Message message = new Message();
+        message.setUsername(username);
+        message.setType(MessageType.TOPIC_REQUEST_MESSAGE);
+        message.setContent(corespondentName);
+        KafkaProducer<String, Message> producer = Producer.getProducer(ServerAddress.LOCALHOST.getAddress());
+        producer.send(Producer.getRecord("topic_requests", "1", message));
+        connections.add(new Corespondent(corespondentName, "pending"));
+    }
+
+    public String getCorespondingTopic(String corespondentName)
+    {
+        Iterator<Corespondent> corespondent = connections.iterator();
+        while(corespondent.hasNext())
+        {
+            if(corespondent.next().getName().equals(corespondentName)) {
+                return corespondent.next().getName();
+            }
+        }
+        return null;
     }
 
     public void stopPingThread() throws InterruptedException {
@@ -57,9 +94,19 @@ public class Client implements ThreadCompleteListener {
         consumerThread.join();
     }
 
+    public void startResponseListenerThread() {
+        responseListenerThread = new ResponseListener(id, connections, requestsTopic);
+        responseListenerThread.addListener(this);
+        responseListenerThread.start();
+    }
+
+    public void stopResponseListenerThread() throws InterruptedException {
+        responseListenerThread.cancelUpdater();
+    }
+
     public ClientStatus getClientStatus()
     {
-        return this.clientStatus;
+        return clientStatus;
     }
 
 
@@ -75,6 +122,17 @@ public class Client implements ThreadCompleteListener {
             this.clientStatus = ClientStatus.DEAD;
             System.out.println("Status updated");
             System.out.println("Client status (client): " + this.getClientStatus());
+        }
+    }
+
+    public void showActiveConnections()
+    {
+        Iterator<Corespondent> corespondent = connections.iterator();
+        while(corespondent.hasNext())
+        {
+            if(corespondent.next().getStatus().equals("connected")) {
+                System.out.println(corespondent);
+            }
         }
     }
 

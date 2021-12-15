@@ -15,7 +15,6 @@ public class TopicRequestHandler implements Runnable{
     private String caller;
     private String callee;
     private KafkaProducer<String,Message> producer;
-    private Producer sender;
 
     public TopicRequestHandler(String caller,
                                String callee,
@@ -26,7 +25,6 @@ public class TopicRequestHandler implements Runnable{
         this.caller=caller;
         this.callee=callee;
         this.producer=producer;
-        this.sender=sender;
     }
 
     @Override
@@ -42,11 +40,11 @@ public class TopicRequestHandler implements Runnable{
                 ClientData c=iterator.next();
                 if(c.equals(caller_client)){
                     message.setContent(callee+","+uniqueTopic); // formatul mesajului este: <friend_username>,<topic>
-                    producer.send(sender.getRecord(c.getRequestsTopic(),"1",message)); // trimitem topicul catre clientul apelant
+                    producer.send(Producer.getRecord(c.getRequestsTopic(),"1",message)); // trimitem topicul catre clientul apelant
                 }
                 if(c.equals(callee_client)){
                     message.setContent(caller+","+uniqueTopic);
-                    producer.send(sender.getRecord(c.getRequestsTopic(),"1",message)); // trimitem topicul catre apelat
+                    producer.send(Producer.getRecord(c.getRequestsTopic(),"1",message)); // trimitem topicul catre apelat
                 }
             }
         }

@@ -25,6 +25,4 @@ public class JsonDeserializer implements Deserializer {
         return message;
     }
 
-    public void close() {
-    }
 }

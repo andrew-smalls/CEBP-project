@@ -1,6 +1,11 @@
 import Client.Client;
+import Client.Message;
+import Client.Producer;
 import Vars.ClientStatus;
 import Client.ClientMenu;
+import Vars.ServerAddress;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.logging.log4j.core.Core;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,15 +49,29 @@ public class ClientCommunication {
                 System.out.println("Type a valid username: ");
                 try{
                     name=br.readLine();
-                    client.startCommunication();
+                    client.requestTopic(name);
                 }catch (IOException e){
                     e.printStackTrace();
                 }
             }
+            else if(answer.equals("3")){
+                String corespondent;
+                System.out.println("Select chat:\n");
+                client.showActiveConnections();
+                try{
+                    corespondent=br.readLine();
+                    client.startCommunication(corespondent);
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+
         }
 
 
         client.stopPingThread();
+        KafkaProducer<String, Message> producer = Producer.getProducer(ServerAddress.LOCALHOST.getAddress());
+        producer.close();
         Thread.sleep(1000);
 
     }

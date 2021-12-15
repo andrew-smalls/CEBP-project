@@ -11,6 +11,7 @@ public class Server implements ThreadCompleteListener {
     private static BlockingQueue<ClientData> clientList;
     private Listener listener;
     private Updater updater;
+    private TopicRequestListener topicRequestListener;
 
     public Server(){
         clientList = new LinkedBlockingDeque<>();
@@ -34,9 +35,13 @@ public class Server implements ThreadCompleteListener {
     }
 
     public void startTopicRequestsListener(){
-        TopicRequestListener topicRequestListener=new TopicRequestListener(groupId,clientList);
+        topicRequestListener=new TopicRequestListener(groupId,clientList);
+        topicRequestListener.start();
     }
 
+    public void stopTopicRequestsListener(){
+        topicRequestListener.stopRequestListener();
+    }
 
     public void cancelListenerThread() throws InterruptedException {
         listener.cancelTimestamper();

@@ -13,10 +13,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class TopicRequestListener extends NotifyingThread implements Runnable{
     private final String requestsTopic="topic_requests";
@@ -26,15 +23,14 @@ public class TopicRequestListener extends NotifyingThread implements Runnable{
     private BlockingQueue<ClientData> clientsList;
     KafkaConsumer<String, Message> consumer;
     KafkaProducer<String,Message> producer;
-    private final ExecutorService executorService=Executors.newFixedThreadPool(4);;
+    private final ExecutorService executorService=Executors.newFixedThreadPool(4);
 
 
     public TopicRequestListener(String groupId, BlockingQueue<ClientData> clientsList){
         this.groupId=groupId;
         receiver=new Consumer(String.valueOf(ServerAddress.LOCALHOST.getAddress()), groupId);
         consumer=receiver.getConsumer();
-        sender= new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
-        producer=sender.getProducer();
+        producer=sender.getProducer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
         this.clientsList=clientsList;
     }
 
@@ -63,7 +59,20 @@ public class TopicRequestListener extends NotifyingThread implements Runnable{
                     }
                 }
             }
-            producer.close();
             consumer.close();
     }
+
+    public void stopRequestListener()
+    {
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executorService.shutdownNow();
+        }
+        this.running = false;
+    }
+
 }

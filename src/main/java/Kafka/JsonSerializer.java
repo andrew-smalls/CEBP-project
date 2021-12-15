@@ -30,8 +30,5 @@ public class JsonSerializer<T> implements Serializer<T> {
 //        return new byte[0];
 //    }
 
-    public void close() {
-
-    }
 }
 

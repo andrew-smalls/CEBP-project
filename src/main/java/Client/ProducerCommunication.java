@@ -16,19 +16,20 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
 
     private String id;
     private String username;
+    private KafkaProducer<String, Message> producer;
 
     public ProducerCommunication(String id, String username, String threadName){
         this.id = id;
         this.username = username;
         this.setName(threadName);
+        producer = Producer.getProducer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
     }
 
     @Override
     public void doRun() {
         String topic = "expireTopic5";
         Message message = new Message();
-        Producer sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
-        KafkaProducer<String, Message> producer = sender.getProducer();
+
 
 
         try {
@@ -42,14 +43,13 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
                 if(message.getContent().equals("exit")){
                     break;
                 }
-                producer.send(sender.getRecord(topic,"1", message));
+                producer.send(Producer.getRecord(topic,"1", message));
             }
 
 
         } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException  e) {
             // We can't recover from these exceptions, so our only option is to close the producer and exit.
             System.out.println("Serious exception encountered, closing producer");
-            producer.close();
         } catch (KafkaException e) {
             // For all other exceptions, just abort the transaction and try again.
             producer.abortTransaction();
@@ -57,6 +57,5 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
             e.printStackTrace();
         }
         System.out.println("Closing producer");
-        producer.close();
     }
 }

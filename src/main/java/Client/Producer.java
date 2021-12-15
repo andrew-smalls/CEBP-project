@@ -9,22 +9,25 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import java.util.Properties;
 
 public class Producer {
-    private Properties properties;
+    private static KafkaProducer<String, Message> producer = null;
 
-    public Producer(String bootstrapServers)
+    private Producer(String bootstrapServers)
     {
-        properties = createProperties(bootstrapServers);
+
     }
 
-    public KafkaProducer<String, Message> getProducer()
+    public static KafkaProducer<String, Message> getProducer(String bootstrapServers)
     {
-        KafkaProducer<String, Message> producer = new KafkaProducer<>(properties);
+        if (producer == null) {
+            Properties properties = createProperties(bootstrapServers);
+            producer = new KafkaProducer<>(properties);
+        }
         return producer;
     }
 
     //If no partition is specified but a key is present a partition will be chosen using a hash of the key.
     // If neither key nor partition is present a partition will be assigned in a round-robin fashion.
-    public ProducerRecord<String, Message> getRecord(String topic,  String key, Message message) {
+    public static ProducerRecord<String, Message> getRecord(String topic,  String key, Message message) {
         ProducerRecord<String, Message> record = new ProducerRecord<>(topic, key, message);
         return record;
     }
@@ -33,10 +36,9 @@ public class Producer {
     {
         producer.send(record);
         producer.flush();
-        producer.close();
     }
 
-    public Properties createProperties(String bootstrapServers)
+    public static Properties createProperties(String bootstrapServers)
     {
         Properties props = new Properties();
 
