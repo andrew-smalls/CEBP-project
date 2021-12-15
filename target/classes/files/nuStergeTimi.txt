@@ -1,60 +1,24 @@
 mvn compile
-PENTRU CLIENT: mvn exec:java -Dexec.mainClass=ClientCommunication -Dexec.cleanupDaemonThreads=false
+PENTRU CLIENT: mvn exec:java -Dexec.mainClass=ClientCommunication
 PENTRU SERVER: mvn exec:java -Dexec.mainClass=ServerCommunication
 PENTRU Creare de topics: mvn exec:java -Dexec.mainClass=CreateTopics
 
 creat imagine docker: docker-compose -f docker-compose.yml up -d
 
+Dependinte folosite la create topic, trebuie schimbate ca sa fie compatibile cu ce avem deja.
 
 
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
 
-
-        <dependency>
+        <dependency> <!-- face niste warning-uri mai nasoale de citit in terminal, dar merge [FOLOSIT PT CREATE TOPICS]-->
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-            <version>3.0.0</version>
+            <artifactId>kafka_2.11</artifactId>
+            <version>0.10.2.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.26</version>
-            <scope>test</scope>
-        </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.5</version>
-        </dependency>
-
-        <dependency>
-                       <groupId>org.apache.logging.log4j</groupId>
-                        <artifactId>log4j-api</artifactId>
-                        <version>2.13.3</version>
-                    </dependency>
-
-
-          <!--
-                  <dependency>
-                      <groupId>org.apache.kafka</groupId>
-                      <artifactId>kafka_2.11</artifactId>
-                      <version>0.11.0.0</version>
-                  </dependency>
-                  <dependency>
-                      <groupId>ru.simplex_software</groupId>
-                      <artifactId>zkutils</artifactId>
-                      <version>1.8</version>
-                  </dependency>
-                  <dependency>
-                      <groupId>com.101tec</groupId>
-                      <artifactId>zkclient</artifactId>
-                      <version>0.8</version>
-                  </dependency>
-                  -->
+docker exec -it kafka /bin/sh
+cd opt
+cd kafka
+cd bin
+kafka-topics.sh --list --bootstrap-server localhost:9092
+kafka-topics.sh --describe --topic <topic-name> --bootstrap-server localhost:9092

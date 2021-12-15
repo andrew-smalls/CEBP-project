@@ -23,7 +23,7 @@ public class CreateTopics {
 
         try (Admin admin = Admin.create(props))
         {
-            String topicName = "expireTopic5";
+            String topicName = "expireTopic6";
             int partitions = 12;
             replicationFactor = 1;
             String retentionMS = "300000"; // 6000 ii aprox 2 min
