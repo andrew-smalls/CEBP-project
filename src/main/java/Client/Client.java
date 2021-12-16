@@ -1,5 +1,6 @@
 package Client;
 
+import Server.ClientData;
 import Tools.UniqueIdGenerator;
 import Vars.ClientStatus;
 
@@ -53,7 +54,7 @@ public class Client implements ThreadCompleteListener {
         message.setType(MessageType.PING_MESSAGE);
         requestsTopic=String.valueOf(System.currentTimeMillis());
         message.setContent(requestsTopic);
-        pingSender.pingServer(pingTopic,message);
+        pingSender.pingServer(pingTopic, message);
     }
 
     public void requestTopic(String corespondentName)
@@ -72,8 +73,13 @@ public class Client implements ThreadCompleteListener {
         Iterator<Corespondent> corespondent = connections.iterator();
         while(corespondent.hasNext())
         {
-            if(corespondent.next().getName().equals(corespondentName)) {
-                return corespondent.next().getName();
+            Corespondent tempData = corespondent.next();
+            System.out.println("Correspondent " + tempData);
+            System.out.println("corespondentName is" + corespondentName);
+
+            if(tempData.getName().equals(corespondentName)) {
+                System.out.println("Correspondent topic fetched is " + tempData.getTopic());
+                return tempData.getTopic();
             }
         }
         return null;
@@ -133,10 +139,17 @@ public class Client implements ThreadCompleteListener {
     public void showActiveConnections()
     {
         Iterator<Corespondent> corespondent = connections.iterator();
+        System.out.println("inside show active connections");
+        int i = 0;
+
         while(corespondent.hasNext())
         {
-            if(corespondent.next().getStatus().equals("connected")) {
-                System.out.println(corespondent);
+            try {
+                Corespondent tempData = corespondent.next();
+                System.out.println("Correspondent " + i++ + ": " + tempData.getName() + ", status: " + tempData.getStatus());
+            }catch(Exception e)
+            {
+                System.out.println("This user disconnected");
             }
         }
     }

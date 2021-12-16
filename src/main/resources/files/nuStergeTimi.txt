@@ -1,20 +1,8 @@
 mvn compile
 PENTRU CLIENT: mvn exec:java -Dexec.mainClass=ClientCommunication
 PENTRU SERVER: mvn exec:java -Dexec.mainClass=ServerCommunication
-PENTRU Creare de topics: mvn exec:java -Dexec.mainClass=CreateTopics
 
 creat imagine docker: docker-compose -f docker-compose.yml up -d
-
-Dependinte folosite la create topic, trebuie schimbate ca sa fie compatibile cu ce avem deja.
-
-
-
-        <dependency> <!-- face niste warning-uri mai nasoale de citit in terminal, dar merge [FOLOSIT PT CREATE TOPICS]-->
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_2.11</artifactId>
-            <version>0.10.2.1</version>
-        </dependency>
-
 
 docker exec -it kafka /bin/sh
 cd opt

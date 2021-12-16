@@ -31,7 +31,7 @@ public class ClientCommunication {
 
         Client client = new Client(username);
         client.startPingThread();
-
+        client.startResponseListenerThread();
         while(true) {
             menu.show();
             try{
@@ -68,7 +68,7 @@ public class ClientCommunication {
 
         }
 
-
+        client.stopResponseListenerThread();
         client.stopPingThread();
         KafkaProducer<String, Message> producer = Producer.getProducer(ServerAddress.LOCALHOST.getAddress());
         producer.close();

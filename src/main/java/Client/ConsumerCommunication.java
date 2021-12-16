@@ -1,9 +1,7 @@
 package Client;
 
-import Kafka.CustomTopic;
-import Vars.ServerAddress;
 import Thread.NotifyingThread;
-import org.apache.kafka.clients.admin.AdminClientConfig;
+import Vars.ServerAddress;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -26,15 +24,13 @@ public class ConsumerCommunication extends NotifyingThread implements Runnable {
     @Override
     public void doRun()
     {
-        CustomTopic topic = new CustomTopic(topicName);   //"exampleTopic1" // aici luam din lista de conexiuni, topic-ul corespunzator user-ului respectiv
 
-        topic.CreateTopic();
 
         Consumer receiver=new Consumer(ServerAddress.LOCALHOST.getAddress(), groupId);
         KafkaConsumer<String, Message> consumer = receiver.getConsumer();
-        consumer.subscribe(Arrays.asList(topic.getName()));
+        consumer.subscribe(Arrays.asList(topicName));
         System.out.println("Consumer started with group id: " + groupId);
-        System.out.println("Communication channel: " + topic.getName());
+        System.out.println("Communication channel: " + topicName);
 
         while (running)
         {

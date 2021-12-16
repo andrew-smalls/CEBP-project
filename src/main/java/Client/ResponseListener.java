@@ -38,7 +38,7 @@ public class ResponseListener extends NotifyingThread implements Runnable{
                 // System.out.println("Parsing records for consumer. Nr of records: " + records.count());
 
                 for (ConsumerRecord<String, Message> record : records) {
-                    System.out.print(record.value());
+                    System.out.println("You have a new active chat: " + record.value() + "\n");
 
                     String[] content = record.value().getContent().split(",");
                     String name = content[0];
@@ -46,17 +46,18 @@ public class ResponseListener extends NotifyingThread implements Runnable{
                     updater = new Runnable() {
                         @Override
                         public void run() {
-                            Iterator<Corespondent> iterator = connections.iterator();
                             Corespondent corespondent = new Corespondent(name, "connected");
-                            if (connections.contains(corespondent))
-                            {
-                                corespondent.setStatus("connected");
+                            corespondent.setTopic(topic);
+                            if (connections.contains(corespondent)) {
+                                connections.remove(corespondent);
                             }
                             try {
                                 connections.put(corespondent);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+
+
                         }
                     };
                     executorService.submit(updater);

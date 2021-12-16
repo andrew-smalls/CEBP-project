@@ -3,6 +3,7 @@ package Server;
 import Client.MessageType;
 import Client.Message;
 import Client.Producer;
+import Kafka.CustomTopic;
 import Tools.UniqueIdGenerator;
 import org.apache.kafka.clients.producer.KafkaProducer;
 
@@ -35,15 +36,17 @@ public class TopicRequestHandler implements Runnable{
             Message message=new Message(MessageType.TOPIC_REQUEST_MESSAGE);
             message.setUsername("server");
             Iterator<ClientData> iterator = clientsList.iterator();
-            String uniqueTopic=String.valueOf(UniqueIdGenerator.generateID()); // topic-ul asta va fi folosit de cei doi clienti pentru conversatie
+            String uniqueTopic = String.valueOf(UniqueIdGenerator.generateID()); // topic-ul asta va fi folosit de cei doi clienti pentru conversatie
+            CustomTopic topic = new CustomTopic(uniqueTopic);   //"exampleTopic1" // aici luam din lista de conexiuni, topic-ul corespunzator user-ului respectiv
+            topic.CreateTopic();
             while(iterator.hasNext()){
                 ClientData c=iterator.next();
                 if(c.equals(caller_client)){
-                    message.setContent(callee+","+uniqueTopic); // formatul mesajului este: <friend_username>,<topic>
+                    message.setContent(callee+","+topic.getName()); // formatul mesajului este: <friend_username>,<topic>
                     producer.send(Producer.getRecord(c.getRequestsTopic(),"1",message)); // trimitem topicul catre clientul apelant
                 }
                 if(c.equals(callee_client)){
-                    message.setContent(caller+","+uniqueTopic);
+                    message.setContent(caller+","+topic.getName());
                     producer.send(Producer.getRecord(c.getRequestsTopic(),"1",message)); // trimitem topicul catre apelat
                 }
             }
