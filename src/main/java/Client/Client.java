@@ -26,6 +26,8 @@ public class Client implements ThreadCompleteListener {
     private String username;
     private String requestsTopic;
     private BlockingQueue<Corespondent> connections;
+    KafkaProducer<String, Message> producer;
+    Producer sender;
 
     public Client(String username)
     {
@@ -63,9 +65,11 @@ public class Client implements ThreadCompleteListener {
         message.setUsername(username);
         message.setType(MessageType.TOPIC_REQUEST_MESSAGE);
         message.setContent(corespondentName);
-        KafkaProducer<String, Message> producer = Producer.getProducer(ServerAddress.LOCALHOST.getAddress());
+        sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
+        producer = sender.getProducer();
         producer.send(Producer.getRecord("topic_requests", "1", message));
-        connections.add(new Corespondent(corespondentName, "pending"));
+        //connections.add(new Corespondent(corespondentName, "pending"));
+        producer.close();
     }
 
     public String getCorespondingTopic(String corespondentName)
@@ -74,11 +78,11 @@ public class Client implements ThreadCompleteListener {
         while(corespondent.hasNext())
         {
             Corespondent tempData = corespondent.next();
-            System.out.println("Correspondent " + tempData);
-            System.out.println("corespondentName is" + corespondentName);
+            //System.out.println("Correspondent " + tempData);
+            //System.out.println("corespondentName is" + corespondentName);
 
             if(tempData.getName().equals(corespondentName)) {
-                System.out.println("Correspondent topic fetched is " + tempData.getTopic());
+                //System.out.println("Correspondent topic fetched is " + tempData.getTopic());
                 return tempData.getTopic();
             }
         }
@@ -86,21 +90,21 @@ public class Client implements ThreadCompleteListener {
     }
 
     public void stopPingThread() throws InterruptedException {
-        System.out.println("Signal ping to stop now");
+        //System.out.println("Signal ping to stop now");
         pingSender.cancelPings();
     }
 
     public void startProducerThread(String topicName){
-        producerThread = new ProducerCommunication(id, username, topicName);
+        producerThread = new ProducerCommunication(id, username, "Producer", topicName);
         producerThread.addListener(this);
-        System.out.println("Starting producer");
+        //System.out.println("Starting producer");
         producerThread.start();
     }
 
     public void startConsumerThread(String topicName) throws InterruptedException {
         consumerThread = new ConsumerCommunication(id, "Consumer", topicName);
         consumerThread.addListener(this);
-        System.out.println("Starting consumer");
+        //System.out.println("Starting consumer");
         consumerThread.start();
         consumerThread.join();
     }
@@ -123,7 +127,7 @@ public class Client implements ThreadCompleteListener {
 
     @Override
     public void notifyOfThreadComplete(Thread thread) throws InterruptedException {
-        System.out.println(thread.getName() + " pinged, it ended");
+        //System.out.println(thread.getName() + " pinged, it ended");
         if(thread.getName().equals("Producer"))
         {
             consumerThread.stopConsumer();
@@ -131,15 +135,15 @@ public class Client implements ThreadCompleteListener {
         else if (thread.getName().equals("Consumer"))
         {
             this.clientStatus = ClientStatus.DEAD;
-            System.out.println("Status updated");
-            System.out.println("Client status (client): " + this.getClientStatus());
+            //System.out.println("Status updated");
+            //System.out.println("Client status (client): " + this.getClientStatus());
         }
     }
 
     public void showActiveConnections()
     {
         Iterator<Corespondent> corespondent = connections.iterator();
-        System.out.println("inside show active connections");
+        //System.out.println("inside show active connections");
         int i = 0;
 
         while(corespondent.hasNext())

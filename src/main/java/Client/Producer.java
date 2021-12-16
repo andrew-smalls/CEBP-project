@@ -9,19 +9,17 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import java.util.Properties;
 
 public class Producer {
-    private static KafkaProducer<String, Message> producer = null;
 
-    private Producer(String bootstrapServers)
+    private Properties properties;
+
+    public Producer(String bootstrapServers)
     {
-
+        properties = createProperties(bootstrapServers);
     }
 
-    public static KafkaProducer<String, Message> getProducer(String bootstrapServers)
+    public KafkaProducer<String, Message> getProducer()
     {
-        if (producer == null) {
-            Properties properties = createProperties(bootstrapServers);
-            producer = new KafkaProducer<>(properties);
-        }
+        KafkaProducer<String, Message> producer = new KafkaProducer<>(properties);
         return producer;
     }
 

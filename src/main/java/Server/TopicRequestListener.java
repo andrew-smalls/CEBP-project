@@ -28,9 +28,12 @@ public class TopicRequestListener extends NotifyingThread implements Runnable{
 
     public TopicRequestListener(String groupId, BlockingQueue<ClientData> clientsList){
         this.groupId=groupId;
-        receiver=new Consumer(String.valueOf(ServerAddress.LOCALHOST.getAddress()), groupId);
-        consumer=receiver.getConsumer();
-        producer=sender.getProducer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
+        receiver = new Consumer(String.valueOf(ServerAddress.LOCALHOST.getAddress()), groupId);
+        consumer = receiver.getConsumer();
+
+        sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
+        producer = sender.getProducer();
+
         this.clientsList=clientsList;
     }
 
@@ -59,6 +62,8 @@ public class TopicRequestListener extends NotifyingThread implements Runnable{
                     }
                 }
             }
+
+            producer.close();
             consumer.close();
     }
 

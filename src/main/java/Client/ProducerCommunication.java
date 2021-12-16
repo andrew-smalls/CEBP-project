@@ -18,19 +18,22 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
     private String username;
     private KafkaProducer<String, Message> producer;
 
-    public ProducerCommunication(String id, String username, String threadName){
+    private String topicName;
+
+    Producer sender;
+    public ProducerCommunication(String id, String username, String threadName, String topicName){
         this.id = id;
         this.username = username;
         this.setName(threadName);
-        producer = Producer.getProducer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
+        //System.out.println("Setting name to producer: " + threadName);
+        this.topicName = topicName;
+        sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
+        producer = sender.getProducer();
     }
 
     @Override
     public void doRun() {
-        String topic = "expireTopic5";
         Message message = new Message();
-
-
 
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -43,7 +46,7 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
                 if(message.getContent().equals("exit")){
                     break;
                 }
-                producer.send(Producer.getRecord(topic,"1", message));
+                producer.send(Producer.getRecord(topicName,"1", message));
             }
 
 
@@ -57,5 +60,7 @@ public class ProducerCommunication extends NotifyingThread implements Runnable{
             e.printStackTrace();
         }
         System.out.println("Closing producer");
+
+        producer.close();
     }
 }

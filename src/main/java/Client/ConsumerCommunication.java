@@ -16,6 +16,7 @@ public class ConsumerCommunication extends NotifyingThread implements Runnable {
 
     public ConsumerCommunication(String groupId, String threadName, String topicName){
         this.groupId=groupId;
+        //System.out.println("Setting name to consumer: " + threadName);
         this.setName(threadName);
 
         this.topicName = topicName;
@@ -28,20 +29,21 @@ public class ConsumerCommunication extends NotifyingThread implements Runnable {
 
         Consumer receiver=new Consumer(ServerAddress.LOCALHOST.getAddress(), groupId);
         KafkaConsumer<String, Message> consumer = receiver.getConsumer();
+        //System.out.println("Subscribing to topic");
         consumer.subscribe(Arrays.asList(topicName));
-        System.out.println("Consumer started with group id: " + groupId);
-        System.out.println("Communication channel: " + topicName);
+        //System.out.println("Consumer started with group id: " + groupId);
+        //System.out.println("Communication channel: " + topicName);
 
         while (running)
         {
             ConsumerRecords<String, Message> records = consumer.poll(Duration.ofMillis(100));
             if(records.count() > 0) {
                 for (ConsumerRecord<String, Message> record : records)
-                    System.out.print(record.value());
+                    System.out.println(record.value());
             }
         }
 
-        System.out.println("Closing consumer");
+        //System.out.println("Closing consumer");
         consumer.close();
 
     }

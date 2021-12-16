@@ -9,10 +9,12 @@ public class PingSender {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture<?> pingHandler;
     Runnable ping;
+    Producer sender;
     KafkaProducer<String, Message> producer;
 
     public PingSender() {
-        producer = Producer.getProducer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
+        sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
+        producer = sender.getProducer();
     }
 
     public void pingServer(String topic, Message message){
@@ -21,6 +23,7 @@ public class PingSender {
             @Override
             public void run() {
                 producer.send(Producer.getRecord(topic, "1", message));
+
             }
          };
         pingHandler = scheduler.scheduleAtFixedRate(ping,100,500, TimeUnit.MILLISECONDS);
@@ -36,6 +39,6 @@ public class PingSender {
         } catch (InterruptedException e) {
             scheduler.shutdownNow();
         }
-
+        producer.close();
     }
 }

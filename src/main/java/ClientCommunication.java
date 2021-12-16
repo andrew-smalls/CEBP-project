@@ -70,8 +70,6 @@ public class ClientCommunication {
 
         client.stopResponseListenerThread();
         client.stopPingThread();
-        KafkaProducer<String, Message> producer = Producer.getProducer(ServerAddress.LOCALHOST.getAddress());
-        producer.close();
         Thread.sleep(1000);
 
     }

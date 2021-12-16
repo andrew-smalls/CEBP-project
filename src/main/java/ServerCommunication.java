@@ -1,8 +1,5 @@
-import Client.Message;
-import Client.Producer;
 import Server.Server;
-import Vars.ServerAddress;
-import org.apache.kafka.clients.producer.KafkaProducer;
+import Server.ServerMenu;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,6 +20,7 @@ public class ServerCommunication {
 
         while(true)
         {
+            ServerMenu.show();
             try{
                 answer = br.readLine();
             }catch (IOException e){
@@ -46,8 +44,6 @@ public class ServerCommunication {
         server.cancelListenerThread();
         server.cancelUpdaterThread();
         server.stopTopicRequestsListener();
-        KafkaProducer<String, Message> producer = Producer.getProducer(ServerAddress.LOCALHOST.getAddress());
-        producer.close();
         Thread.sleep(100);
         System.out.println("Threads active before closing = " + Thread.activeCount());
     }
