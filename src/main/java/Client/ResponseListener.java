@@ -20,11 +20,15 @@ public class ResponseListener extends NotifyingThread implements Runnable{
     private Runnable updater;
     private ExecutorService executorService= Executors.newFixedThreadPool(2);
 
+    private String groupId;
+
     public ResponseListener(String groupId, BlockingQueue<Corespondent> connections, String requestsTopic) {
         this.connections = connections;
-        receiver=new Consumer(String.valueOf(ServerAddress.LOCALHOST.getAddress()), groupId);
+        this.groupId = groupId;
+        receiver = new Consumer(String.valueOf(ServerAddress.LOCALHOST.getAddress()), groupId);
         consumer=receiver.getConsumer();
         this.requestsTopic = requestsTopic;
+
     }
 
     @Override
@@ -40,28 +44,29 @@ public class ResponseListener extends NotifyingThread implements Runnable{
                 for (ConsumerRecord<String, Message> record : records) {
                     System.out.println("You have a new active chat: " + record.value() + "\n");
 
-                    String[] content = record.value().getContent().split(",");
-                    String name = content[0];
-                    String topic = content[1];
-                    updater = new Runnable() {
-                        @Override
-                        public void run() {
-                            Corespondent corespondent = new Corespondent(name, "connected");
-                            corespondent.setTopic(topic);
-                            if (connections.contains(corespondent)) {
-                                connections.remove(corespondent);
-                            }
-                            try {
-                                connections.put(corespondent);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                        String[] content = record.value().getContent().split(",");
+                        String name = content[0];
+                        String topic = content[1];
+                        updater = new Runnable() {
+                            @Override
+                            public void run() {
+                                Corespondent corespondent = new Corespondent(name, "connected");
+                                corespondent.setTopic(topic);
+                                if (connections.contains(corespondent)) {
+                                    connections.remove(corespondent);
+                                }
+                                try {
+                                    connections.put(corespondent);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
 
 
-                        }
-                    };
-                    executorService.submit(updater);
-                    // get the message content
+                            }
+                        };
+                        executorService.submit(updater);
+                        // get the message content
+
                 }
             }
         }

@@ -1,19 +1,20 @@
 package Client;
 
-import Server.ClientData;
+import Thread.NotifyingThread;
+import Thread.ThreadCompleteListener;
 import Tools.UniqueIdGenerator;
 import Vars.ClientStatus;
-
-import Thread.ThreadCompleteListener;
-import Thread.NotifyingThread;
 import Vars.ServerAddress;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.logging.log4j.core.Core;
 
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class Client implements ThreadCompleteListener {
 
@@ -22,31 +23,87 @@ public class Client implements ThreadCompleteListener {
     private NotifyingThread producerThread, consumerThread;
     private ResponseListener responseListenerThread;
     private PingSender pingSender;
-    private String pingTopic="client_pings_topic";
+    private String pingTopic = "client_pings_topic";
     private String username;
     private String requestsTopic;
     private BlockingQueue<Corespondent> connections;
     KafkaProducer<String, Message> producer;
     Producer sender;
+    private Consumer receiverNameCheckConsumer;
 
-    public Client(String username)
-    {
-        pingSender=new PingSender();
+    public Client() {
+        pingSender = new PingSender();
+        clientStatus = ClientStatus.ALIVE;
+        //this.username = username;
+        this.connections = new LinkedBlockingDeque<>();
+        requestsTopic = String.valueOf(System.currentTimeMillis());
+    }
+
+    public Client(String username) {
+        pingSender = new PingSender();
         clientStatus = ClientStatus.ALIVE;
         this.username = username;
         this.connections = new LinkedBlockingDeque<>();
+        requestsTopic = String.valueOf(System.currentTimeMillis());
     }
 
     public void startCommunication(String corespondent) throws InterruptedException {
         String topic = getCorespondingTopic(corespondent);
-        if (topic == null)
-        {
+        if (topic == null) {
             System.out.println("\nYou don't have a connection with this user\n");
-        }
-        else {
+        } else {
             startProducerThread(topic);
             startConsumerThread(topic);
         }
+    }
+
+    public boolean checkNameFromServer(String username) {
+        KafkaProducer<String, Message> producer;
+        sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
+        producer = sender.getProducer();
+
+        Message message = new Message();
+        message.setType(MessageType.NAME_REQUEST);
+        message.setUsername(username);
+        message.setContent(requestsTopic);
+        producer.send(Producer.getRecord("topic_requests", "1", message));
+        producer.close();
+
+        KafkaConsumer<String, Message> consumerNameCheck;
+        Consumer receiverNameCheck = new Consumer(String.valueOf(ServerAddress.LOCALHOST.getAddress()), id);
+        consumerNameCheck = receiverNameCheck.getConsumer();
+        boolean result = false;
+        consumerNameCheck.subscribe(Arrays.asList(requestsTopic));
+        boolean responseReceived = false;
+        while (!responseReceived)
+        {
+
+            ConsumerRecords<String, Message> records = consumerNameCheck.poll(Duration.ofMillis(100));
+            if (records.count() > 0)
+            {
+                for (ConsumerRecord<String, Message> record : records)
+                {
+                    if (record.value().getType().equals(MessageType.VALID_NAME)) {
+                        result = true;
+                        responseReceived = true;
+                        break;
+                    }
+                    else if (record.value().getType().equals(MessageType.INVALID_NAME))
+                    {
+                        result = false;
+                        responseReceived = true;
+                        break;
+                     }
+                }
+             }
+        }
+        consumerNameCheck.close();
+
+        return result;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void startPingThread()
@@ -54,7 +111,7 @@ public class Client implements ThreadCompleteListener {
         Message message = new Message();
         message.setUsername(username);
         message.setType(MessageType.PING_MESSAGE);
-        requestsTopic=String.valueOf(System.currentTimeMillis());
+
         message.setContent(requestsTopic);
         pingSender.pingServer(pingTopic, message);
     }

@@ -1,11 +1,6 @@
 import Client.Client;
-import Client.Message;
-import Client.Producer;
-import Vars.ClientStatus;
 import Client.ClientMenu;
-import Vars.ServerAddress;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.logging.log4j.core.Core;
+import Tools.NameReader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,22 +9,26 @@ import java.io.InputStreamReader;
 
 public class ClientCommunication {
 
+
+
     public static void main(String[] args) throws InterruptedException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String answer;
         String username = "";
         ClientMenu menu=new ClientMenu();
 
-
         System.out.println("Welcome!\n");
-        System.out.println("Type your name: ");
-        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-        try{
-            username = br.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        Client client = new Client(username);
+        Client client = new Client();
+        username = NameReader.readName();
+        while(!client.checkNameFromServer(username))
+        {
+            System.out.println("Invalid name, please choose another name");
+            username = NameReader.readName();
+        }
+        client.setUsername(username);
+
+
         client.startPingThread();
         client.startResponseListenerThread();
         while(true) {
