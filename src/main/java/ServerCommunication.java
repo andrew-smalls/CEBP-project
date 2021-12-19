@@ -32,12 +32,15 @@ public class ServerCommunication {
             }
             else if(answer.equals("info")){
                 server.getPulse();
+                System.out.print("\n");
             }
             else if(answer.equals("online")){
                 server.getConnectedClients();
+                System.out.print("\n");
             }
             else if(answer.equals("all")){
                 server.getListOfClients();
+                System.out.print("\n");
             }
         }
 
