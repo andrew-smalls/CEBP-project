@@ -6,7 +6,8 @@ public class ClientMenu {
                 "Pick option:\n"+
                         "1 - Request chat\n"+
                         "2 - Exit\n"+
-                        "3 - Active chats\n"
-        );
+                        "3 - Active chats\n"+
+                        "4 - Create group\n"
+                );
     }
 }

@@ -47,7 +47,7 @@ public class TopicRequestListener extends NotifyingThread implements Runnable{
             {
                 ConsumerRecords<String, Message> records = consumer.poll(Duration.ofMillis(100));
                 if(records.count() > 0) {
-                    //System.out.println("Record (server): " + record.value());
+
                     for (ConsumerRecord<String, Message> record : records) {
                         if(record.value().getType().equals(MessageType.NAME_REQUEST))
                         {
@@ -82,6 +82,15 @@ public class TopicRequestListener extends NotifyingThread implements Runnable{
                         if(record.value().getType().equals(MessageType.TOPIC_REQUEST_MESSAGE))
                         {
                             TopicRequestHandler handler=new TopicRequestHandler(record.value().getUsername(),
+                                    record.value().getContent(),
+                                    clientsList,
+                                    producer,
+                                    sender);
+                            executorService.execute(handler);
+                        }
+                        if(record.value().getType().equals(MessageType.GROUP_TOPIC_REQUEST_MESSAGE))
+                        {
+                            GroupTopicRequestHandler handler=new GroupTopicRequestHandler(record.value().getUsername(),
                                     record.value().getContent(),
                                     clientsList,
                                     producer,

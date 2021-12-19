@@ -11,6 +11,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
@@ -129,6 +130,21 @@ public class Client implements ThreadCompleteListener {
         producer.close();
     }
 
+    public void requestTopicForGroup(String groupName, ArrayList<String> members)
+    {
+        Message message = new Message();
+        message.setUsername(username);
+        message.setType(MessageType.GROUP_TOPIC_REQUEST_MESSAGE);
+        message.setContent(groupName + "," + members.toString().replace("[", "")
+                .replace("]", "")
+                .replace(" ", ""));
+        sender = new Producer(String.valueOf(ServerAddress.LOCALHOST.getAddress()));
+        producer = sender.getProducer();
+        producer.send(Producer.getRecord("topic_requests", "1", message));
+        producer.close();
+    }
+
+
     public String getCorespondingTopic(String corespondentName)
     {
         Iterator<Corespondent> corespondent = connections.iterator();
@@ -207,7 +223,7 @@ public class Client implements ThreadCompleteListener {
         {
             try {
                 Corespondent tempData = corespondent.next();
-                System.out.println("Correspondent " + i++ + ": " + tempData.getName() + ", status: " + tempData.getStatus());
+                System.out.println(i++ + ". " + tempData.getName());
             }catch(Exception e)
             {
                 System.out.println("This user disconnected");

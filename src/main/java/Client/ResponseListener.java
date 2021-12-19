@@ -42,7 +42,8 @@ public class ResponseListener extends NotifyingThread implements Runnable{
                 // System.out.println("Parsing records for consumer. Nr of records: " + records.count());
 
                 for (ConsumerRecord<String, Message> record : records) {
-                    System.out.println("You have a new active chat: " + record.value() + "\n");
+                    if(record.value().getType().equals(MessageType.TOPIC_REQUEST_MESSAGE)) {
+                        System.out.println("You have a new active chat: " + record.value() + "\n");
 
                         String[] content = record.value().getContent().split(",");
                         String name = content[0];
@@ -66,6 +67,32 @@ public class ResponseListener extends NotifyingThread implements Runnable{
                         };
                         executorService.submit(updater);
                         // get the message content
+                    }
+                    if(record.value().getType().equals(MessageType.GROUP_TOPIC_REQUEST_MESSAGE)) {
+                        System.out.println("You have a new active group chat: " + record.value() + "\n");
+                        String[] content = record.value().getContent().split(",");
+                        String name = content[0];
+                        String topic = content[1];
+
+                        updater = new Runnable() {
+                            @Override
+                            public void run() {
+                                Corespondent corespondent = new Corespondent(name, "connected");
+                                corespondent.setTopic(topic);
+                                if (connections.contains(corespondent)) {
+                                    connections.remove(corespondent);
+                                }
+                                try {
+                                    connections.put(corespondent);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        };
+                        executorService.submit(updater);
+                    }
 
                 }
             }
