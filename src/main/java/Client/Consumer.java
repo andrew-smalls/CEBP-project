@@ -37,7 +37,7 @@ public class Consumer {
 
         while (true)
         {
-            ConsumerRecords<String, Message> records = consumer.poll(Duration.ofMillis(100));
+            ConsumerRecords<String, Message> records = consumer.poll(Duration.ofMillis(100)); //Duration.ofMillis(100) //Long.parseLong(String.valueOf(Duration.ofMillis(100)))
             for (ConsumerRecord<String, Message> record : records)
             {
                 logger.info("Key: " + record.key() + ", Value:" + record.value());

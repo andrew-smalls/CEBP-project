@@ -1,32 +1,37 @@
 import Client.Client;
-import Vars.ClientStatus;
 import Client.ClientMenu;
+import Tools.NameReader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 
 public class ClientCommunication {
 
-    public static void main(String[] args) throws InterruptedException {
+
+
+    public static void main(String[] args) throws InterruptedException, IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String answer;
         String username = "";
         ClientMenu menu=new ClientMenu();
 
-
         System.out.println("Welcome!\n");
-        System.out.println("Type your name: ");
-        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-        try{
-            username = br.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        Client client = new Client();
+        username = NameReader.readName();
+        while(!client.checkNameFromServer(username))
+        {
+            System.out.println("Invalid name, please choose another name");
+            username = NameReader.readName();
         }
+        client.setUsername(username);
 
-        Client client = new Client(username);
+
         client.startPingThread();
-
+        client.startResponseListenerThread();
         while(true) {
             menu.show();
             try{
@@ -44,19 +49,43 @@ public class ClientCommunication {
                 System.out.println("Type a valid username: ");
                 try{
                     name=br.readLine();
-                    client.startCommunication();
+                    client.requestTopic(name);
                 }catch (IOException e){
                     e.printStackTrace();
                 }
-
-                //System.out.println("Iti dam conversatie mai tarziu\n");
             }
+            else if(answer.equals("3")){
+                String corespondent;
+                System.out.println("Select chat:\n");
+                client.showActiveConnections();
+                try{
+                    corespondent=br.readLine();
+                    client.startCommunication(corespondent);
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+            else if(answer.equals("4")){
+                ArrayList<String> members = new ArrayList<>();
+                System.out.println("What is the group's name?\n");
+                String groupName = br.readLine();
+                System.out.println("Who do you want to add in your group?\n");
+                System.out.println("Type a valid username: ");
+                String corespondent = br.readLine();
+                while(!corespondent.equals("Done"))
+                {
+                    members.add(corespondent);
+                    System.out.println("Type a valid username: ");
+                    corespondent = br.readLine();
+                }
+                client.requestTopicForGroup(groupName, members);
+                //System.out.println(members);
+            }
+
         }
 
-
+        client.stopResponseListenerThread();
         client.stopPingThread();
-        //System.out.println("Done\n");
-        //System.out.println("Thread nr: "+Thread.activeCount());
         Thread.sleep(1000);
 
     }

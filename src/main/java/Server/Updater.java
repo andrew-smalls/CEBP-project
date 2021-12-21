@@ -1,0 +1,55 @@
+package Server;
+
+import java.util.Iterator;
+import java.util.concurrent.BlockingQueue;
+
+public class Updater implements Runnable{
+
+    // should get rid of clients with expired timestamps
+
+    private boolean running = true;
+    private BlockingQueue<ClientData> clientList;
+
+    public Updater(BlockingQueue<ClientData> clientList) {
+        this.clientList = clientList;
+    }
+
+    @Override
+    public void run() {
+        while (running)
+        {
+            Iterator<ClientData> iterator = clientList.iterator();
+            Long currentTimestamp = System.currentTimeMillis();
+
+            while (iterator.hasNext()) {   //go through items of the queue that holds the list of users
+                ClientData tempData = iterator.next();
+                Long timestamp = Long.valueOf(tempData.getTimestamp());
+                Long delta = currentTimestamp - timestamp;
+
+                if(delta > 1000)       //compute time since last timestamp delivered through ping. If more than 1 sec passed, should remove the user
+                {
+                    //System.out.println("User " + tempData.getClientIdentifier() + " should be removed, inactive for " + delta);
+                    tempData.setStatus("offline");
+                    if(clientList.remove(tempData))
+                        System.out.println("Removed inactive user");
+                }
+            }
+
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cancelUpdater() {
+        this.running = false;
+    }
+
+    public String isAlive() {
+        if(running)
+            return "alive";
+        return "dead";
+    }
+}
