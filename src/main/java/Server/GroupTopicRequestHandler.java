@@ -47,33 +47,24 @@ public class GroupTopicRequestHandler implements Runnable{
         Message message=new Message(MessageType.GROUP_TOPIC_REQUEST_MESSAGE);
         message.setUsername("server");
         String uniqueTopic = String.valueOf(UniqueIdGenerator.generateID());
-        CustomTopic topic = new CustomTopic(uniqueTopic);   //"exampleTopic1" // aici luam din lista de conexiuni, topic-ul corespunzator user-ului respectiv
+        CustomTopic topic = new CustomTopic(uniqueTopic);
         topic.CreateTopic();
 
         Iterator<ClientData> iterator = clientsList.iterator();
         while(iterator.hasNext()){
             ClientData c=iterator.next();
             if(c.equals(caller_client)){
-                message.setContent(groupName+","+topic.getName()); // formatul mesajului este: <friend_username>,<topic>
+                message.setContent(groupName+","+topic.getName());
                 System.out.println("Message content for leader: " + message.getContent());
-                producer.send(Producer.getRecord(c.getRequestsTopic(),"1",message)); // trimitem topicul catre clientul apelant
+                producer.send(Producer.getRecord(c.getRequestsTopic(),"1",message));
             }
             for(ClientData callee_client : callee_clients) {
                 if (c.equals(callee_client)) {
                     String[] names = members.split(",");
-//                    StringBuilder temp = new StringBuilder(caller);
-//                    temp.append(',');
-//                    for (String n : names)
-//                    {
-//                        if(!n.equals(c.getClientIdentifier()))
-//                        {
-//                            temp.append(n).append(',');
-//                        }
-//                    }
 
                     message.setContent(groupName + "," + topic.getName());
                     System.out.println("Message content for members: " + message.getContent());
-                    producer.send(Producer.getRecord(c.getRequestsTopic(), "1", message)); // trimitem topicul catre apelat
+                    producer.send(Producer.getRecord(c.getRequestsTopic(), "1", message));
                 }
             }
         }
